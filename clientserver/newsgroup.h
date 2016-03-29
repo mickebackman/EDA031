@@ -26,8 +26,6 @@ class NewsGroup {
 	int groupId;
 	set<Article> articles;
 };
-<<<<<<< HEAD
-=======
 
 bool operator<(NewsGroup lhs, NewsGroup rhs){
 	return lhs.getId() < rhs.getId();
@@ -39,4 +37,3 @@ bool operator==(NewsGroup lhs, int rhs){
 	return lhs.getId() == rhs;
 }
 #endif
->>>>>>> cf3dcac18d65e3fbdf33c00857543f6a9c2c2a43
