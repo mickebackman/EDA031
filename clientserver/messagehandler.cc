@@ -5,10 +5,10 @@
 using namespace std;
 
 int MessageHandler::readNumber(){
-	unsigned char byte1 = conn->read();
-	unsigned char byte2 = conn->read();
-	unsigned char byte3 = conn->read();
-	unsigned char byte4 = conn->read();
+	unsigned char byte1 = conn.read();
+	unsigned char byte2 = conn.read();
+	unsigned char byte3 = conn.read();
+	unsigned char byte4 = conn.read();
 	return (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
 }
 
@@ -30,7 +30,15 @@ string MessageHandler::readString(){
 
 void MessageHandler::writeString(const string& s){
 	for (char c : s) {
-		conn->write(c);
+		conn.write(c);
 	}
-	conn->write(’$’);
+	conn.write(’$’);
+}
+
+unsigned char MessageHandler::readByte(){
+	return conn.read();
+}
+
+void MessageHandler::writeByte(unsigned char c){
+	conn.write(c);
 }

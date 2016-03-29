@@ -2,6 +2,7 @@
 #include <set>
 #include <algorithm>
 #include "newsgroup.h"
+#include "article.h"
 
 using namespace std;
 
@@ -17,4 +18,12 @@ NewsGroup::addArticle(std::string name, std::string author, std::string text){
 bool NewsGroup::deleteArticle(int id){
 	return (articles.erase(remove_if(articles.begin(), articles.end(), 
 		( [] (int articleId) {return id == articleId;}))) > 0);
+}
+
+Article NewsGroup::getArticle(int id){
+	auto it = articles.find(id);
+	if (it == articles.end()){
+		throw runtime_error("Article could not be found");
+	}
+	else return *it;
 }

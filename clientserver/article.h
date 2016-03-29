@@ -23,5 +23,8 @@ bool operator<(Article lhs, Article rhs){
 bool operator==(Article lhs, Article rhs){
 	return lhs.getId() == rhs.getId();
 }
+bool operator==(Article lhs, int rhs){
+	return lhs.getId() == rhs;
+}
 
 #endif

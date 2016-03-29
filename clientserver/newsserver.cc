@@ -1,7 +1,6 @@
 
 
-int main(){
-
+int main(int argc, char* argv[]){
 
 	if (argc != 2) {
 		cerr << "Usage: myserver port-number" << endl;
@@ -20,17 +19,44 @@ int main(){
 		exit(1);
 	}
 
-
-
-
 	while (true) {
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {
+			MessageHandler mh(conn);
 			try {
-				/*
-				* Communicate with a client, through messagehandler...
-				* and 
-				*/
+			unsigned char command = mh.readByte();
+			switch(command){
+				case Protocol::COM_LIST_NG:
+
+				break;
+				case Protocol::COM_LIST_NG:
+
+				break;
+				case Protocol::COM_LIST_NG:
+
+				break;
+				case Protocol::COM_LIST_NG:
+
+				break;
+				case Protocol::COM_LIST_NG:
+
+				break;
+				case Protocol::COM_LIST_NG:
+
+				break;
+				case Protocol::COM_LIST_NG:
+
+				break;
+				case Protocol::COM_LIST_NG:
+
+				break;
+
+				deafult:
+				// DÖDA DEN SOM FAN - disconnecta
+				break;
+
+
+
 			} catch (ConnectionClosedException&) {
 			server.deregisterConnection(conn);
 		cout << "Client closed connection" << endl;
