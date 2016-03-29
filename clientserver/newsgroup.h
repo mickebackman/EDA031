@@ -23,4 +23,3 @@ class NewsGroup {
 	int groupId;
 	set<Article> articles;
 };
-
