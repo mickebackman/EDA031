@@ -28,26 +28,27 @@ int main(int argc, char* argv[]){
 			switch(command){
 				case Protocol::COM_LIST_NG:
 
+				
 				break;
-				case Protocol::COM_LIST_NG:
+				case Protocol::COM_CREATE_NG:
 
 				break;
-				case Protocol::COM_LIST_NG:
+				case Protocol::COM_DELETE_AG:
 
 				break;
-				case Protocol::COM_LIST_NG:
+				case Protocol::COM_LIST_ART:
 
 				break;
-				case Protocol::COM_LIST_NG:
+				case Protocol::COM_CREATE_ART:
 
 				break;
-				case Protocol::COM_LIST_NG:
+				case Protocol::COM_DELETE_ART:
 
 				break;
-				case Protocol::COM_LIST_NG:
+				case Protocol::COM_GET_ART:
 
 				break;
-				case Protocol::COM_LIST_NG:
+				case Protocol::COM_END:
 
 				break;
 
@@ -55,7 +56,7 @@ int main(int argc, char* argv[]){
 				// DÖDA DEN SOM FAN - disconnecta
 				break;
 
-
+			}
 
 			} catch (ConnectionClosedException&) {
 			server.deregisterConnection(conn);
