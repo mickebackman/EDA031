@@ -13,9 +13,10 @@ class NewsGroup {
 
 	// Deletes an article with the articleId Id
 	bool deleteArticle(int id);
+	int getId() {return groupId;}
 
 	// Returns the set of articles
-	set<Article> getArticles() {return articles}
+	set<Article> getArticles() {return articles;}
 
 	private:
 	std::string groupName;
@@ -24,3 +25,10 @@ class NewsGroup {
 	set<Article> articles;
 };
 
+bool operator<(NewsGroup lhs, NewsGroup rhs){
+	return lhs.getId() < rhs.getId();
+}
+bool operator==(NewsGroup lhs, NewsGroup rhs){
+	return lhs.getId() == rhs.getId();
+}
+#endif

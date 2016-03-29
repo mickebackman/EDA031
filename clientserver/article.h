@@ -8,7 +8,7 @@ class Article {
 	Article(std::string name, std::string author, std::string text, int id) : articleName(name), articleAuthor(author), articleText(text), articleId(id){}
 
 	//Returns the articleId
-	getId() {return articleId};
+	int getId() {return articleId};
 
 	private:
 	std::string articleName;
@@ -16,3 +16,12 @@ class Article {
 	std::string articleText;
 	int articleId;
 };
+
+bool operator<(Article lhs, Article rhs){
+	return lhs.getId() < rhs.getId();
+}
+bool operator==(Article lhs, Article rhs){
+	return lhs.getId() == rhs.getId();
+}
+
+#endif
