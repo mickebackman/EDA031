@@ -49,5 +49,12 @@ void MemoryDatabase::deleteNewsGroup(int newsGroupId){
   }
   groups.erase(it);
 }
-string MemoryDatabase::listNewsGroups();
+string MemoryDatabase::listNewsGroups(){
+  string result;
+  result += to_string(groups.size());
+  for (NewsGroup n : groups){
+      result += "\n" n.getId() + " " + n.getName();
+  }
+  return result;
+}
 string MemoryDatabase::listArticlesInNewsGroup(int newsGroupId);
