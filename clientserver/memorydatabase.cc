@@ -51,9 +51,9 @@ void MemoryDatabase::deleteNewsGroup(int newsGroupId){
 }
 vector<pair<int, string>> MemoryDatabase::getNewsGroups(){
   vector<pair<int, string>> result;
-  result += to_string(groups.size());
+
   for (NewsGroup n : groups){
-      result += "\n" n.getId() + ". " + n.getName();
+      result.push_back(make_pair(n.getId(), n.getName());
   }
   return result;
 }
