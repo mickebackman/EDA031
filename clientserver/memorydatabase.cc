@@ -57,4 +57,14 @@ string MemoryDatabase::listNewsGroups(){
   }
   return result;
 }
-string MemoryDatabase::listArticlesInNewsGroup(int newsGroupId);
+string MemoryDatabase::listArticlesInNewsGroup(int newsGroupId){
+  auto it = groups.find(newsGroupId);
+  if(it == groups.end()){
+    throw runtime_error("The group does not exist!");
+  }
+  set<Article> articles = it->getArticles();
+  string result;
+  for(Article a: articles){
+    result += a.getId() + ". " + a.getName()+ " From: " + a.getAuthor(); 
+  }
+}
