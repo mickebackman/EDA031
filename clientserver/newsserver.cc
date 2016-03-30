@@ -82,7 +82,7 @@ int main(int argc, char* argv[]){
 	} else if (argv[2].compare("memory")){
 		db = new MemoryDatabase();
 	}else {
-		cerr << "Error in databasechoice" << endl;
+		cerr << "Error in database choice" << endl;
 		exit(1);
 	}
 
