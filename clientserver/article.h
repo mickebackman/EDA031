@@ -8,7 +8,7 @@ class Article {
 	Article(std::string name, std::string author, std::string text, int id) : articleName(name), articleAuthor(author), articleText(text), articleId(id){}
 
 	//Returns the articleId
-	int getId() {return articleId};
+	int getId() {return articleId;};
 	std::string getAuthor() {return articleAuthor;}
 	std::string getText() {return articleText;}
 	std::string getName() {return articleName;}

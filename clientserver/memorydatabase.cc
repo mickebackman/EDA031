@@ -1,19 +1,29 @@
+#include "memorydatabase.h"
+#include <string>
+#include <iostream>
+#include "article.h"
+#include "newsgroup.h"
+#include <vector>
+#include <set>
 
 using namespace std;
 
 void MemoryDatabase::addArticle(int newsGroupId, string name, string author, string text){
-  auto it = groups.find(newsGroupName);
+
+  // FEL SOM FAN. Lös detta pls
+  string temp = "";
+  std::set<NewsGroup>::iterator it = groups.find(NewsGroup(temp, newsGroupId));
   if(it == groups.end()){
     throw runtime_error("The news group does not exist!");
   }
   try{
-   it->addArticle(name, author, text);
- }catch(...){
-   throw;
+   (*it).addArticle(name, author, text);
+ }catch(exception& e){
+   throw runtime_error("Could not add article");
  }
 }
 void MemoryDatabase::addNewsGroup(string newsGroupName){
-    auto p = groups.insert(NewsGroup(nextGroupId, newsGroupName));
+    auto p = groups.insert(NewsGroup(newsGroupName, nextGroupId));
     if(!p.second){
       throw runtime_error("The group already exists!");
     }

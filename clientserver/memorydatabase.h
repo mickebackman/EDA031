@@ -5,6 +5,7 @@
 #include <string>
 #include "newsgroup.h"
 #include "article.h"
+#include <vector>
 
  class MemoryDatabase{
 public:
@@ -14,7 +15,7 @@ public:
    Article getArticle(int newsGroupId, int articleId);
    void deleteArticle(int newsGroupId, int articleId);
    void deleteNewsGroup(int newsGroupId);
-   std::vector<pair<int, std::string>> getNewsGroups();
+   std::vector<std::pair<int, std::string> > getNewsGroups();
    std::set<Article> getArticlesInNewsGroup(int newsGroupId);
    int numberOfNewsGroups();
    int numberOfArticlesInNewsGroup(int newsGroupId);

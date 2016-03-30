@@ -124,6 +124,7 @@ bool ListArticles(MessageHandler& mh, Database& db){
 		// Protocol was not followed
 		return false;
 }
+}
 
 bool CreateArticle(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();

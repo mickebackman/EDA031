@@ -18,13 +18,13 @@ class NewsGroup {
 	std::string getName(){return groupName;}
 
 	// Returns the set of articles
-	set<Article> getArticles() {return articles;}
+	std::set<Article> getArticles() {return articles;}
 
 	private:
 	std::string groupName;
-	int nextArticleId;
 	int groupId;
-	set<Article> articles;
+	int nextArticleId;
+	std::set<Article> articles;
 };
 
 bool operator<(NewsGroup lhs, NewsGroup rhs){
