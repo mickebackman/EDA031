@@ -49,22 +49,30 @@ void MemoryDatabase::deleteNewsGroup(int newsGroupId){
   }
   groups.erase(it);
 }
-string MemoryDatabase::listNewsGroups(){
-  string result;
+vector<pair<int, string>> MemoryDatabase::getNewsGroups(){
+  vector<pair<int, string>> result;
   result += to_string(groups.size());
   for (NewsGroup n : groups){
       result += "\n" n.getId() + ". " + n.getName();
   }
   return result;
 }
-string MemoryDatabase::listArticlesInNewsGroup(int newsGroupId){
+set<Article> MemoryDatabase::getArticlesInNewsGroup(int newsGroupId){
   auto it = groups.find(newsGroupId);
   if(it == groups.end()){
     throw runtime_error("The group does not exist!");
   }
-  set<Article> articles = it->getArticles();
-  string result;
-  for(Article a: articles){
-    result += a.getId() + ". " + a.getName()+ " From: " + a.getAuthor() "\n"; 
+  return it->getArticles();
+}
+
+int MemoryDatabase::numberOfNewsGroups(){
+  return groups.size();
+}
+
+int numberOfArticlesInNewsGroup(int newsGroupId){
+  auto it = groups.find(newsGroupId);
+  if(it == groups.end()){
+    throw runtime_error("The group does not exist!");
   }
+  return it->getArticles().size();
 }

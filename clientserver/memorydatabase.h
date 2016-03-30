@@ -14,12 +14,14 @@ public:
    Article getArticle(int newsGroupId, int articleId);
    void deleteArticle(int newsGroupId, int articleId);
    void deleteNewsGroup(int newsGroupId);
-   std::string listNewsGroups();
-   std::string listArticlesInNewsGroup(int newsGroupId);
+   std::vector<pair<int, std::string>> getNewsGroups();
+   std::set<Article> getArticlesInNewsGroup(int newsGroupId);
+   int numberOfNewsGroups();
+   int numberOfArticlesInNewsGroup(int newsGroupId);
 
  private:
    int nextGroupId;
-   // A set containing all the news groups. 
+   // A set containing all the news groups.
    std::set<NewsGroup> groups;
 
 };

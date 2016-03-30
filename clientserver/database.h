@@ -16,12 +16,17 @@ public:
    // deletes the specified group.
    virtual void deleteNewsGroup(int newsGroupId);
    // Returns a string representation of all of the groups.
-   virtual std::string listNewsGroups();
+   virtual std::vector<pair<int, std::string> getNewsGroups();
    // Returns a string representation of all the articles in the specified group.
-   virtual std::string listArticlesInNewsGroup(int newsGroupId);
+   virtual std::set<Article> getArticlesInNewsGroup(int newsGroupId);
+   //Returns the number of news groups.
+   virual int numberOfNewsGroups();
+   //Return number of articles in the specified news group.
+   virtual int numberOfArticlesInNewsGroup(int newsGroupId);
+
 
  private:
-   // The id for the group that is added next. 
+   // The id for the group that is added next.
    int nextGroupId;
 
 };
