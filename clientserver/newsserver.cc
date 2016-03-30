@@ -8,37 +8,37 @@
 
 using namespace std;
 
-void ListNewsGroup(std::shared_ptr<Connection>& conn, Database& db){
+void ListNewsGroup(MessageHandler& mh, Database& db){
 	//TODO: Göra dessa metoder.. Vi ska läsa in mera och tolka kommandot sen svara
 	//genom messagehandler, men vi har ju ett objekt av messagehandler? Funkar detta då?
 	//ska vi istället bara göra metoder som ligger löst vi kan kalla på? slipper vi göra 
 	//nya messagehandlers i whilesatsen
 }
 
-void CreateNewsGroup(std::shared_ptr<Connection>& conn, Database& db){
+void CreateNewsGroup(MessageHandler& mh, Database& db){
 
 }
 
-void DeleteNewsGroup(std::shared_ptr<Connection>& conn, Database& db){
+void DeleteNewsGroup(MessageHandler& mh, Database& db){
 
 }
 
-void ListArticles(std::shared_ptr<Connection>& conn, Database& db){
+void ListArticles(MessageHandler& mh, Database& db){
 
 }
 
-void CreateArticle(std::shared_ptr<Connection>& conn, Database& db){
+void CreateArticle(MessageHandler& mh, Database& db){
 
 }
 
-void DeleteArticle(std::shared_ptr<Connection>& conn, Database& db){
+void DeleteArticle(MessageHandler& mh, Database& db){
 
 }
 
-void GetArticle(std::shared_ptr<Connection>& conn, Database& db){
+void GetArticle(MessageHandler& mh, Database& db){
 
 }
-void End(std::shared_ptr<Connection>& conn, Database& db){
+void End(MessageHandler& mh, Database& db){
 
 }
 
@@ -82,7 +82,7 @@ int main(int argc, char* argv[]){
 			unsigned char command = mh.readByte();
 			switch(command){
 				case Protocol::COM_LIST_NG:
-					ListNewsGroup(conn, db);
+					ListNewsGroup(mh, db);
 				break;
 				case Protocol::COM_CREATE_NG:
 					CreateNewsGroup(conn, db);
