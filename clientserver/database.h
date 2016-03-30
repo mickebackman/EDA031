@@ -10,8 +10,10 @@ public:
    // Adds a news group to the database.
    virtual void addNewsGroup(std::string newsGroupName);
    // Returns the article with articleId in the specified group.
+   // Throws 0 if the group does not exist and 1 if the article does not exist
    virtual Article getArticle(int newsGroupId, int articleId);
-   // Deletes the specified article from the specified group.
+   // Deletes the specified article from the specified group. 
+   // Throws 0 if the group does not exist and 1 if the article does not exist
    virtual void deleteArticle(int newsGroupId, int articleId);
    // deletes the specified group.
    virtual void deleteNewsGroup(int newsGroupId);

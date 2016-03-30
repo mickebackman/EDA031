@@ -23,22 +23,23 @@ void MemoryDatabase::addNewsGroup(string newsGroupName){
 Article MemoryDatabase::getArticle(int newsGroupId, int articleId){
   auto it = groups.find(newsGroupId);
   if(it == groups.end()){
-      throw runtime_error("The group does not exist!");
+    // group does not exist - 0
+      throw 0;
   }
   try{
     return it->getArticle(articleId);
-  }catch(...){
-    throw;
+  }catch(exception& e){
+    throw 1;
   }
 }
 void MemoryDatabase::deleteArticle(int newsGroupId, int articleId){
   auto it = groups.find(newsGroupId);
   if(it == groups.end()){
-    throw runtime_error("The group does not exist!");
+    throw 0;
   }
 
   if(!(it->deleteArticle(articleId))){
-    throw runtime_error("The article does not exist!");
+    throw 1;
   }
 }
 

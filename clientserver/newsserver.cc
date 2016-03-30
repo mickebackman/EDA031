@@ -161,12 +161,69 @@ bool CreateArticle(MessageHandler& mh, Database& db){
 }
 
 bool DeleteArticle(MessageHandler& mh, Database& db){
-
+	unsigned char c = mh.readByte();
+	if (c == PAR_NUM){
+		int newsGroupId = mh.readNumber();
+		if (mh.readByte() == PAR_NUM){
+			int artId = mh.readNumber();
+			if (mh.readByte() == COM_END){
+			mh.writeByte(ANS_DELETE_ART);
+			try{
+				db.deleteArticle();
+				mh.writeByte(ANS_ACK);
+				}catch(int e){
+					mh.writeByte(ANS_NAK);
+			 		if(e==0){ // newsgroup error
+			 			mh.writeByte(ERR_NG_DOES_NOT_EXIST);
+			 		}else { // article error
+			 			mh.writeByte(ERR_ART_DOES_NOT_EXIST);
+			 		}
+				}
+			mh.writeByte(ANS_END);
+			return true;
+			}
+		}
+	}
+	// Does not follow protocol
+	return false;
 }
 
 
 bool GetArticle(MessageHandler& mh, Database& db){
-
+	unsigned char c = mh.readByte();
+	if (c == PAR_NUM){
+		int newsGroupId = mh.readNumber();
+		if (mh.readByte() == PAR_NUM){
+			int artId = mh.readNumber();
+			if (mh.readByte() == COM_END){
+				mh.writeByte(ANS_GET_ART);
+				try{
+					Article a = db.getArticle(newsGroupId, artId);
+					mh.writeByte(ANS_ACK);
+					mh.writeByte(PAR_STRING);
+					mh.writeNumber(a.getName().size());
+					mh.writeString(a.getName());
+					mh.writeByte(PAR_STRING);
+					mh.writeNumber(a.getAuthor().size());
+					mh.writeString(a.getAuthor());
+					mh.writeByte(PAR_STRING);
+					mh.writeNumber(a.getText().size());
+					mh.writeString(a.getText());
+				}catch (int e){
+					mh.writeByte(ANS_NAK);
+					if (e==0){
+						mh.writeByte(ERR_NG_DOES_NOT_EXIST);
+					}else{
+						mh.writeByte(ERR_ART_DOES_NOT_EXIST);
+					}
+				}
+				mh.writeByte(ANS_END);
+				return true;
+			}
+		}
+	}
+	// Does not follow protocol
+	return false;
 }
 
 // string_p: PAR_STRING N char1 char2 ... charN // N is the number of characters
