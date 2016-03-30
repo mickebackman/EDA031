@@ -85,30 +85,31 @@ int main(int argc, char* argv[]){
 					ListNewsGroup(mh, db);
 				break;
 				case Protocol::COM_CREATE_NG:
-					CreateNewsGroup(conn, db);
+					CreateNewsGroup(mh, db);
 				break;
 				case Protocol::COM_DELETE_NG:
-					DeleteNewsGroup(conn, db);
+					DeleteNewsGroup(mh, db);
 				break;
 				case Protocol::COM_LIST_ART:
-					ListArticles(conn, db);
+					ListArticles(mh, db);
 				break;
 				case Protocol::COM_CREATE_ART:
-					CreateArticle(conn, db);
+					CreateArticle(mh, db);
 				break;
 				case Protocol::COM_DELETE_ART:
-					DeleteArticle(conn, db);
+					DeleteArticle(mh, db);
 				break;
 				case Protocol::COM_GET_ART:
-					GetArticle(conn, db);
+					GetArticle(mh, db);
 				break;
 				case Protocol::COM_END:
-					End(conn, db);
+					End(mh, db);
 				break;
 
 				deafult:
-				// TODO: Erraneous command - Throw error or just print something?
-					throw runtime_error("Wrong command inserted");
+
+					server.deregisterConnection(conn);
+					cout << "Wrong command received, disconnecting client" << endl;
 					break;
 
 			}

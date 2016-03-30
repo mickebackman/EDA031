@@ -9,6 +9,9 @@ class Article {
 
 	//Returns the articleId
 	int getId() {return articleId};
+	std::string getAuthor() {return articleAuthor;}
+	std::string getText() {return articleText;}
+	std::string getName() {return articleName;}
 
 	private:
 	std::string articleName;
