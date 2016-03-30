@@ -53,7 +53,7 @@ string MemoryDatabase::listNewsGroups(){
   string result;
   result += to_string(groups.size());
   for (NewsGroup n : groups){
-      result += "\n" n.getId() + " " + n.getName();
+      result += "\n" n.getId() + ". " + n.getName();
   }
   return result;
 }
@@ -65,6 +65,6 @@ string MemoryDatabase::listArticlesInNewsGroup(int newsGroupId){
   set<Article> articles = it->getArticles();
   string result;
   for(Article a: articles){
-    result += a.getId() + ". " + a.getName()+ " From: " + a.getAuthor(); 
+    result += a.getId() + ". " + a.getName()+ " From: " + a.getAuthor() "\n"; 
   }
 }
