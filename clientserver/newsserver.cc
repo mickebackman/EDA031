@@ -1,18 +1,36 @@
 #include <string>
+#include <vector>
 #include "messagehandler.h"
 #include "memorydatabase.h"
 #include "database.h"
 #include "diskdatabase.h"
+#include "protocol.h"
 #include <memory>
 #include <iostream>
 
 using namespace std;
 
 void ListNewsGroup(MessageHandler& mh, Database& db){
-	//TODO: Göra dessa metoder.. Vi ska läsa in mera och tolka kommandot sen svara
-	//genom messagehandler, men vi har ju ett objekt av messagehandler? Funkar detta då?
-	//ska vi istället bara göra metoder som ligger löst vi kan kalla på? slipper vi göra 
-	//nya messagehandlers i whilesatsen
+	unsigned char c = mh.readByte();
+	if (c == COM_END){
+		vector<pair<int, string> v = db.listNewsGroups();
+
+		// Answer on form: ANS_LIST_NG num_p [num_p string_p]* ANS_END
+		mh.writeByte(ANS_LIST_NG);
+		mh.writeByte(PAR_NUM);
+		mh.writeNumber(v.size());
+		for (pair<int,string> p : v){
+			mh.writeByte(PAR_NUM);
+			mh.writeNumber(p.first);
+			mh.writeByte(PAR_STRING);
+			mh.writeNumber(p.second.size());
+			mh.writeString(p.second);
+		}
+		mh.writeByte(ANS_END);
+	} else {
+		 // Skicka tillbaka fel - Hur?
+	}
+
 }
 
 void CreateNewsGroup(MessageHandler& mh, Database& db){
