@@ -5,16 +5,26 @@
 #include "database.h"
 #include "diskdatabase.h"
 #include "protocol.h"
+#include "article.h"
+#include "newsgroup.h"
 #include <memory>
 #include <iostream>
 
 using namespace std;
 
-void ListNewsGroup(MessageHandler& mh, Database& db){
+bool ListNewsGroup(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
 	if (c == COM_END){
-		vector<pair<int, string> v = db.listNewsGroups();
-
+		try{
+			vector<pair<int, string> v = db.getNewsGroups();
+		}
+		catch (exception& e){
+			mh.writeByte(ANS_LIST_NG);
+			mh.writeByte(PAR_NUM);
+			mh.writeNumber(0);
+			mh.writeByte(ANS_END);
+			return;
+		}
 		// Answer on form: ANS_LIST_NG num_p [num_p string_p]* ANS_END
 		mh.writeByte(ANS_LIST_NG);
 		mh.writeByte(PAR_NUM);
@@ -27,38 +37,140 @@ void ListNewsGroup(MessageHandler& mh, Database& db){
 			mh.writeString(p.second);
 		}
 		mh.writeByte(ANS_END);
+		return true;
 	} else {
-		 // Skicka tillbaka fel - Hur?
+		return false;
 	}
 
 }
 
-void CreateNewsGroup(MessageHandler& mh, Database& db){
+bool CreateNewsGroup(MessageHandler& mh, Database& db){
+	unsigned char c = mh.readByte();
+	int n; 
+	string s;
+	unsigned char c;
+	if (c == PAR_STRING){
+		n = mh.readNumber();
+		s = mh.readString();
+		char c = mh.readByte();
+		try{
+			db.addNewsGroup(s);
+			mh.writeByte(ANS_CREATE_NG);
+			mh.writeByte(ANS_ACK);
+			mh.writeByte(ANS_END);
+		} catch(exception& e){
+		 mh.writeByte(ANS_CREATE_NG);
+		 mh.writeByte(ANS_NAK);
+		 mh.writeByte(ERR_NG_ALREADY_EXISTS);
+
+		}
+		return true;
+	}
+	else{
+		// Protocol was not followed
+		return false;
+	}
+}
+
+bool DeleteNewsGroup(MessageHandler& mh, Database& db){
+	unsigned char c = mh.readByte();
+	if (c == PAR_NUM){
+		int deleteid = mh.readNumber();
+		unsigned char e = mh.readByte();
+		mh.writeByte(ANS_DELETE_NG);
+		try {
+			db.deleteNewsGroup(deleteid);
+			mh.writeByte(ANS_ACK);
+		}catch(exception& e){
+			mh.writeByte(ANS_NAK);
+			mh.writeByte(ERR_NG_DOES_NOT_EXIST);
+		}
+		mh.writeByte(ANS_END);
+		return true;
+	}else{
+		// Protocol was not followed
+		return false;
+	}
+}
+
+
+bool ListArticles(MessageHandler& mh, Database& db){
+	unsigned char c = mh.readByte();
+	if (c == PAR_NUM){
+		int newsGroupId = mh.readNumber();
+		unsigned char e = mh.readByte();
+		mh.writeByte(ANS_LIST_ART);
+		try {
+			set<Article> s = db.getArticlesInNewsGroup(newsGroupId);
+			mh.writeByte(ANS_ACK);
+			mh.writeByte(PAR_NUM);
+			mh.writeNumber(s.size());
+			for(Article a : s){
+				mh.writeByte(PAR_NUM);
+				mh.writeNumber(a.getId());
+				mh.writeByte(PAR_STRING);
+				mh.writeNumber(a.getName().size());
+				mh.writeString(a.getName());
+			}
+		}catch(exception& e){
+			mh.writeByte(ANS_NAK);
+			mh.writeByte(ERR_NG_DOES_NOT_EXIST);
+
+		}
+		mh.writeByte(ANS_END);
+		return true;
+	}
+	else{
+		// Protocol was not followed
+		return false;
+}
+
+bool CreateArticle(MessageHandler& mh, Database& db){
+	unsigned char c = mh.readByte();
+	if (c == PAR_NUM){
+		int newsGroupId = mh.readNumber();
+		if (mh.readByte() == PAR_STRING){
+			mh.readNumber();
+			string title = mh.readString();
+			if (mh.readByte() == PAR_STRING){
+				mh.readNumber();
+				string author = mh.readString();
+				if (mh.readByte() == PAR_STRING{
+					mh.readNumber();
+					string text = mh.readString();
+					if (mh.readByte() == COM_END){
+						// All is good. Respond
+						mh.writeByte(ANS_CREATE_ART);
+						try{
+							db.addArticle(newsGroupId, title, author,text);
+							mh.writeByte(ANS_ACK);
+							mh.writeByte(ANS_END);
+							
+						}catch(exception& e){
+							mh.writeByte(ANS_NAK);
+							mh.writeByte(ANS_END);
+						}
+						return true;
+					}
+				}
+			}
+		}
+	}
+	// Protocol was not followed
+	return false;
+}
+
+bool DeleteArticle(MessageHandler& mh, Database& db){
 
 }
 
-void DeleteNewsGroup(MessageHandler& mh, Database& db){
+
+bool GetArticle(MessageHandler& mh, Database& db){
 
 }
 
-void ListArticles(MessageHandler& mh, Database& db){
-
-}
-
-void CreateArticle(MessageHandler& mh, Database& db){
-
-}
-
-void DeleteArticle(MessageHandler& mh, Database& db){
-
-}
-
-void GetArticle(MessageHandler& mh, Database& db){
-
-}
-void End(MessageHandler& mh, Database& db){
-
-}
+// string_p: PAR_STRING N char1 char2 ... charN // N is the number of characters
+// num_p: PAR_NUM N // N is the number
 
 int main(int argc, char* argv[]){
 
@@ -100,28 +212,46 @@ int main(int argc, char* argv[]){
 			unsigned char command = mh.readByte();
 			switch(command){
 				case Protocol::COM_LIST_NG:
-					ListNewsGroup(mh, db);
+					if (!ListNewsGroup(mh, db)){
+					server.deregisterConnection(conn);
+					cout << "Protocol not followed in listing news groups, disconnecting client" << endl;
+					}
 				break;
 				case Protocol::COM_CREATE_NG:
-					CreateNewsGroup(mh, db);
+					if(!CreateNewsGroup(mh, db)){
+					server.deregisterConnection(conn);
+					cout << "Protocol not followed in creating a news group, disconnecting client" << endl;
+					}
 				break;
 				case Protocol::COM_DELETE_NG:
-					DeleteNewsGroup(mh, db);
+					if(!DeleteNewsGroup(mh, db)){
+					server.deregisterConnection(conn);
+					cout << "Protocol not followed in deleting a news group, disconnecting client" << endl;
+					}
 				break;
 				case Protocol::COM_LIST_ART:
-					ListArticles(mh, db);
+					if(!ListArticles(mh, db)){
+					server.deregisterConnection(conn);
+					cout << "Protocol not followed in listing articles, disconnecting client" << endl;
+					}
 				break;
 				case Protocol::COM_CREATE_ART:
-					CreateArticle(mh, db);
+					if(!CreateArticle(mh, db)){
+					server.deregisterConnection(conn);
+					cout << "Protocol not followed in creating article, disconnecting client" << endl;
+					}
 				break;
 				case Protocol::COM_DELETE_ART:
-					DeleteArticle(mh, db);
+					if(!DeleteArticle(mh, db)){
+					server.deregisterConnection(conn);
+					cout << "Protocol not followed in deleting article, disconnecting client" << endl;
+					}
 				break;
 				case Protocol::COM_GET_ART:
-					GetArticle(mh, db);
-				break;
-				case Protocol::COM_END:
-					End(mh, db);
+					if(!GetArticle(mh, db)){
+					server.deregisterConnection(conn);
+					cout << "Protocol not followed in getting article, disconnecting client" << endl;
+					}
 				break;
 
 				deafult:
