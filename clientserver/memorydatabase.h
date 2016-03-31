@@ -1,7 +1,7 @@
 #ifndef MEMORYDATABASE_H
 #define MEMORYDATABASE_H
 
-#include <set>
+#include <map>
 #include <string>
 #include "newsgroup.h"
 #include "article.h"
@@ -9,7 +9,7 @@
 
  class MemoryDatabase{
 public:
-   MemoryDatabase(): nextGroupId(0){};
+   MemoryDatabase(): nextGroupId(0){}
    void addArticle(int newsGroupName, std::string name, std::string author, std::string text);
    void addNewsGroup(std::string newsGroupName);
    Article getArticle(int newsGroupId, int articleId);
@@ -22,8 +22,8 @@ public:
 
  private:
    int nextGroupId;
-   // A set containing all the news groups.
-   std::set<NewsGroup> groups;
+   // A map containing all the news groups with id as key.
+   std::map<int, NewsGroup> groups;
 
 };
 

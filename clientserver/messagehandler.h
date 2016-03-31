@@ -1,6 +1,7 @@
 #ifndef MESSAGEHANDLER_H
 #define MESSAGEHANDLER_H
 
+#include <string>
 #include "connection.h"
 
 class MessageHandler {
@@ -13,7 +14,7 @@ class MessageHandler {
 		std::string readString();
 		void writeString(const std::string& s);
 	private:
-		Connection& conn; 
+		Connection& conn;
 };
 
 #endif

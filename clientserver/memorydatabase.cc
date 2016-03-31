@@ -4,26 +4,24 @@
 #include "article.h"
 #include "newsgroup.h"
 #include <vector>
-#include <set>
+#include <map>
 
 using namespace std;
 
 void MemoryDatabase::addArticle(int newsGroupId, string name, string author, string text){
-
   // FEL SOM FAN. Lös detta pls
-  string temp = "";
-  std::set<NewsGroup>::iterator it = groups.find(NewsGroup(temp, newsGroupId));
-  if(it == groups.end()){
-    throw runtime_error("The news group does not exist!");
-  }
   try{
-   (*it).addArticle(name, author, text);
- }catch(exception& e){
-   throw runtime_error("Could not add article");
+  groups.at(newsGroupId).addArticle(name, author, text);
+ }catch(...){
+   // Group does not exist
+   throw 0;
  }
+
 }
+
+
 void MemoryDatabase::addNewsGroup(string newsGroupName){
-    auto p = groups.insert(NewsGroup(newsGroupName, nextGroupId));
+    auto p = groups.insert(make_pair(nextGroupId, NewsGroup(newsGroupName, nextGroupId)));
     if(!p.second){
       throw runtime_error("The group already exists!");
     }
@@ -31,27 +29,38 @@ void MemoryDatabase::addNewsGroup(string newsGroupName){
 }
 
 Article MemoryDatabase::getArticle(int newsGroupId, int articleId){
-  auto it = groups.find(newsGroupId);
-  if(it == groups.end()){
+  NewsGroup g;
+  try{
+    g = groups.at(newsGroupId);
+  }catch(...){
     // group does not exist - 0
-      throw 0;
+    throw 0;
   }
   try{
-    return it->getArticle(articleId);
+    return g.getArticle(articleId);
   }catch(exception& e){
     throw 1;
   }
+
 }
+
 void MemoryDatabase::deleteArticle(int newsGroupId, int articleId){
-  auto it = groups.find(newsGroupId);
-  if(it == groups.end()){
+
+  NewsGroup g;
+  try{
+    g = groups.at(newsGroupId);
+  }catch(...){
+    // group does not exist - 0
     throw 0;
   }
-
-  if(!(it->deleteArticle(articleId))){
+  try{
+    g.deleteArticle(articleId);
+  }catch(exception& e){
     throw 1;
+    }
   }
-}
+
+
 
 void MemoryDatabase::deleteNewsGroup(int newsGroupId){
   auto it = groups.find(newsGroupId);
@@ -63,17 +72,20 @@ void MemoryDatabase::deleteNewsGroup(int newsGroupId){
 vector<pair<int, string>> MemoryDatabase::getNewsGroups(){
   vector<pair<int, string>> result;
 
-  for (NewsGroup n : groups){
-      result.push_back(make_pair(n.getId(), n.getName());
+  for (auto p : groups){
+      result.push_back(make_pair(p.first, p.second.getName()));
   }
   return result;
 }
 set<Article> MemoryDatabase::getArticlesInNewsGroup(int newsGroupId){
-  auto it = groups.find(newsGroupId);
-  if(it == groups.end()){
-    throw runtime_error("The group does not exist!");
+  NewsGroup g;
+  try{
+    g = groups.at(newsGroupId);
+  }catch(...){
+    // group does not exist - 0
+    throw 0;
   }
-  return it->getArticles();
+  return g.getArticles();
 }
 
 int MemoryDatabase::numberOfNewsGroups(){
@@ -81,9 +93,12 @@ int MemoryDatabase::numberOfNewsGroups(){
 }
 
 int numberOfArticlesInNewsGroup(int newsGroupId){
-  auto it = groups.find(newsGroupId);
-  if(it == groups.end()){
-    throw runtime_error("The group does not exist!");
+  NewsGroup g;
+  try{
+    g = groups.at(newsGroupId);
+  }catch(...){
+    // group does not exist - 0
+    throw 0;
   }
-  return it->getArticles().size();
+  return g.getArticles().size();
 }

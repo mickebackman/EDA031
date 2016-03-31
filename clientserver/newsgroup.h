@@ -6,8 +6,8 @@
 
 class NewsGroup {
 	public:
-	NewsGroup(std::string name, int id) : groupName(name), groupId(id), nextArticleId(0){}
-
+	NewsGroup(std::string name = "", int id = -1) : groupName(name), groupId(id), nextArticleId(0){}
+	NewsGroup(const NewsGroup &n) : groupName(n.groupName), groupId(n.groupId), nextArticleId(n.nextArticleId){}
 	// Creates an new article and adds it to the list. Throws runtime_error upon error inserting article.
 	void addArticle(std::string name, std::string author, std::string text);
 
