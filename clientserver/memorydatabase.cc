@@ -77,7 +77,7 @@ vector<pair<int, string>> MemoryDatabase::getNewsGroups(){
   }
   return result;
 }
-set<Article> MemoryDatabase::getArticlesInNewsGroup(int newsGroupId){
+map<int, Article> MemoryDatabase::getArticlesInNewsGroup(int newsGroupId){
   NewsGroup g;
   try{
     g = groups.at(newsGroupId);

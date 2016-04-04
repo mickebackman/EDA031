@@ -17,7 +17,7 @@ public:
    void deleteArticle(int newsGroupId, int articleId);
    void deleteNewsGroup(int newsGroupId);
    std::vector<std::pair<int, std::string> > getNewsGroups();
-   std::set<Article> getArticlesInNewsGroup(int newsGroupId);
+   std::map<int, Article> getArticlesInNewsGroup(int newsGroupId);
    int numberOfNewsGroups();
    int numberOfArticlesInNewsGroup(int newsGroupId);
 

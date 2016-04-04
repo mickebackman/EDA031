@@ -1,7 +1,7 @@
 #ifndef NEWSGROUP_H
 #define NEWSGROUP_H
 
-#include <set>
+#include <map>
 #include "article.h"
 
 class NewsGroup {
@@ -21,13 +21,13 @@ class NewsGroup {
 	NewsGroup& operator=(NewsGroup& rhs);
 
 	// Returns the set of articles
-	std::set<Article> getArticles() {return articles;}
+	std::map<int, Article> getArticles() {return articles;}
 
 	private:
 	std::string groupName;
 	int groupId;
 	int nextArticleId;
-	std::set<Article> articles;
+	std::map<int, Article> articles;
 };
 
 bool operator<(NewsGroup lhs, NewsGroup rhs){

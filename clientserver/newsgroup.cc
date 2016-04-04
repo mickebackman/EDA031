@@ -1,5 +1,5 @@
 #include <string>
-#include <set>
+#include <map>
 #include <algorithm>
 #include "newsgroup.h"
 #include "article.h"
@@ -8,7 +8,7 @@ using namespace std;
 
 void
 NewsGroup::addArticle(std::string name, std::string author, std::string text){
-	auto it = articles.insert(Article(name, author,text, nextArticleId));
+	auto it = articles.insert(make_pair(nextArticleId, Article(name, author,text, nextArticleId)));
 	if (!it.second){
 		throw runtime_error("Could not insert article by " + author + " in group: " + groupName);
 	}
@@ -18,15 +18,15 @@ NewsGroup::addArticle(std::string name, std::string author, std::string text){
 bool NewsGroup::deleteArticle(int id){
 	auto it = articles.end();
 	return (articles.erase(remove_if(articles.begin(), articles.end(), 
-		( [id] (const Article& art) {return id == art.getId();}))) != it);
+		( [id] (const Article& art) {return id == art.getId();}))) != it.second);
 }
 
 Article NewsGroup::getArticle(size_t id){
-	auto it = articles.find(Article("","","",id));
+	auto it = articles.find(id);
 	if (it == articles.end()){
 		throw runtime_error("Article could not be found");
 	}
-	else return *it;
+	else return (*it).second;
 }
 
 // NewsGroup& NewsGroup::operator=(NewsGroup&& rhs){

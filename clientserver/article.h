@@ -6,19 +6,27 @@ class Article {
 	public:
 	//Creates an new article
 	Article(std::string name, std::string author, std::string text, int id) : articleName(name), articleAuthor(author), articleText(text), articleId(id){}
-
+	Article(const Article& art) : articleName(art.articleName),  articleAuthor(art.articleAuthor), articleText(art.articleText), articleId(art.articleId){}
 	//Returns the articleId
 	int getId() const {return articleId;};
 	std::string getAuthor() const {return articleAuthor;}
 	std::string getText() const {return articleText;}
 	std::string getName() const {return articleName;}
-	Article& operator=(Article& rhs){
+	Article& operator=(const Article& rhs){
 		articleName = rhs.articleName;
 		articleAuthor = rhs.articleAuthor;
 		articleText = rhs.articleText;
 		articleId = rhs.articleId;
 		return *this;
-	}
+}
+
+Article& operator=(const Article&& rhs){
+		articleName = rhs.articleName;
+		articleAuthor = rhs.articleAuthor;
+		articleText = rhs.articleText;
+		articleId = rhs.articleId;
+		return *this;
+}
 
 	private:
 	std::string articleName;
