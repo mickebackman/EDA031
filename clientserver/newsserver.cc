@@ -46,13 +46,16 @@ bool ListNewsGroup(MessageHandler& mh, Database& db){
 		return false;
 	}
 }
+//COM_CREATE_NG PAR_STRING 0 0 0 7 G r o u p   1 COM_END
 
 bool CreateNewsGroup(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
 	int n;
 	string s;
 	if (c == Protocol::PAR_STRING){
+		cout << "Skriv n" << endl;
 		n = mh.readNumber();
+		cout << n;
 		s = mh.readString();
 		c = mh.readByte();
 		try{
