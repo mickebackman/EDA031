@@ -92,7 +92,7 @@ int MemoryDatabase::numberOfNewsGroups(){
   return groups.size();
 }
 
-int numberOfArticlesInNewsGroup(int newsGroupId){
+int MemoryDatabase::numberOfArticlesInNewsGroup(int newsGroupId){
   // NewsGroup g;
   // try{
   //   g = groups.at(newsGroupId);
