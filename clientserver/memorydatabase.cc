@@ -9,7 +9,6 @@
 using namespace std;
 
 void MemoryDatabase::addArticle(int newsGroupId, string name, string author, string text){
-  // FEL SOM FAN. Lös detta pls
   try{
   groups.at(newsGroupId).addArticle(name, author, text);
  }catch(...){

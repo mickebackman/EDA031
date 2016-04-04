@@ -1,11 +1,12 @@
+
 #include <string>
 #include <cstring>
 #include <vector>
 #include "messagehandler.h"
 #include "memorydatabase.h"
-#include "database.h"
+//#include "database.h"
 #include "server.h"
-#include "diskdatabase.h"
+//#include "diskdatabase.h"
 #include "protocol.h"
 #include "article.h"
 #include "newsgroup.h"
@@ -77,7 +78,7 @@ bool DeleteNewsGroup(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
 	if (c == Protocol::PAR_NUM){
 		int deleteid = mh.readNumber();
-		unsigned char e = mh.readByte();
+		mh.readByte();
 		mh.writeByte(Protocol::ANS_DELETE_NG);
 		try {
 			db.deleteNewsGroup(deleteid);
@@ -99,7 +100,7 @@ bool ListArticles(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
 	if (c == Protocol::PAR_NUM){
 		int newsGroupId = mh.readNumber();
-		unsigned char e = mh.readByte();
+		mh.readByte();
 		mh.writeByte(Protocol::ANS_LIST_ART);
 		try {
 			map<int,Article> s = db.getArticlesInNewsGroup(newsGroupId);
@@ -247,11 +248,11 @@ int main(int argc, char* argv[]){
 
 	// Arguments for starting the program with the choice of db-type
 	// TODO: db kanske behöver vara på heapen?
-	Database db;
+	MemoryDatabase db = MemoryDatabase();
 	if ((strncmp(argv[2],"disk",4)) == 0){
 		//db = DiskDatabase();
 	} else if ((strncmp(argv[2],"memory",6)) == 0){
-		db = MemoryDatabase();
+
 	}else {
 		cerr << "Error in database choice" << endl;
 		exit(1);
@@ -313,7 +314,7 @@ int main(int argc, char* argv[]){
 					}
 				break;
 
-				deafult:
+				default:
 
 					server.deregisterConnection(conn);
 					cout << "Wrong command received, disconnecting client" << endl;
