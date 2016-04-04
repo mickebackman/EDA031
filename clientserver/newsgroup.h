@@ -17,7 +17,6 @@ class NewsGroup {
 	Article getArticle(size_t id);
 	int getId() {return groupId;}
 	std::string getName(){return groupName;}
-	// NewsGroup& operator=(NewsGroup&& rhs);
 	NewsGroup& operator=(NewsGroup& rhs);
 
 	// Returns the set of articles
@@ -30,14 +29,5 @@ class NewsGroup {
 	std::map<int, Article> articles;
 };
 
-bool operator<(NewsGroup lhs, NewsGroup rhs){
-	return lhs.getId() < rhs.getId();
-}
-bool operator==(NewsGroup lhs, std::string rhs){
-	return lhs.getName() == rhs;
-}
-bool operator==(NewsGroup lhs, int rhs){
-	return lhs.getId() == rhs;
-}
 
 #endif

@@ -16,9 +16,8 @@ NewsGroup::addArticle(std::string name, std::string author, std::string text){
 }
 
 bool NewsGroup::deleteArticle(int id){
-	auto it = articles.end();
-	return (articles.erase(remove_if(articles.begin(), articles.end(), 
-		( [id] (const Article& art) {return id == art.getId();}))) != it.second);
+
+	return articles.erase(id) == 1;
 }
 
 Article NewsGroup::getArticle(size_t id){
@@ -28,15 +27,6 @@ Article NewsGroup::getArticle(size_t id){
 	}
 	else return (*it).second;
 }
-
-// NewsGroup& NewsGroup::operator=(NewsGroup&& rhs){
-// 	groupName =  std::move(rhs.getName());
-// 	groupId =  std::move(rhs.groupId);
-// 	nextArticleId =  std::move(rhs.nextArticleId);
-// 	articles =  std::move(rhs.articles);
-// 	delete rhs;
-// 	return *this;
-// }
 
 NewsGroup& NewsGroup::operator=(NewsGroup& rhs){
 	groupName = rhs.groupName;
