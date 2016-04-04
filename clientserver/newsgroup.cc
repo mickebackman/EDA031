@@ -16,14 +16,32 @@ NewsGroup::addArticle(std::string name, std::string author, std::string text){
 }
 
 bool NewsGroup::deleteArticle(int id){
+	auto it = articles.end();
 	return (articles.erase(remove_if(articles.begin(), articles.end(), 
-		( [] (int articleId) {return id == articleId;}))) > 0);
+		( [id] (const Article& art) {return id == art.getId();}))) != it);
 }
 
-Article NewsGroup::getArticle(int id){
-	auto it = articles.find(id);
+Article NewsGroup::getArticle(size_t id){
+	auto it = articles.find(Article("","","",id));
 	if (it == articles.end()){
 		throw runtime_error("Article could not be found");
 	}
 	else return *it;
+}
+
+// NewsGroup& NewsGroup::operator=(NewsGroup&& rhs){
+// 	groupName =  std::move(rhs.getName());
+// 	groupId =  std::move(rhs.groupId);
+// 	nextArticleId =  std::move(rhs.nextArticleId);
+// 	articles =  std::move(rhs.articles);
+// 	delete rhs;
+// 	return *this;
+// }
+
+NewsGroup& NewsGroup::operator=(NewsGroup& rhs){
+	groupName = rhs.groupName;
+	groupId = rhs.groupId;
+	nextArticleId = rhs.nextArticleId;
+	articles = rhs.articles;
+	return *this;
 }

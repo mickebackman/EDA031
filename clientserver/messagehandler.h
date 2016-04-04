@@ -14,7 +14,7 @@ class MessageHandler {
 		std::string readString();
 		void writeString(const std::string& s);
 	private:
-		Connection& conn;
+		const Connection& conn;
 };
 
 #endif

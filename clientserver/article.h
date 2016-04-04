@@ -8,10 +8,17 @@ class Article {
 	Article(std::string name, std::string author, std::string text, int id) : articleName(name), articleAuthor(author), articleText(text), articleId(id){}
 
 	//Returns the articleId
-	int getId() {return articleId;};
-	std::string getAuthor() {return articleAuthor;}
-	std::string getText() {return articleText;}
-	std::string getName() {return articleName;}
+	int getId() const {return articleId;};
+	std::string getAuthor() const {return articleAuthor;}
+	std::string getText() const {return articleText;}
+	std::string getName() const {return articleName;}
+	Article& operator=(Article& rhs){
+		articleName = rhs.articleName;
+		articleAuthor = rhs.articleAuthor;
+		articleText = rhs.articleText;
+		articleId = rhs.articleId;
+		return *this;
+	}
 
 	private:
 	std::string articleName;

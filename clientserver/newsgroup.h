@@ -5,6 +5,7 @@
 #include "article.h"
 
 class NewsGroup {
+
 	public:
 	NewsGroup(std::string name = "", int id = -1) : groupName(name), groupId(id), nextArticleId(0){}
 	NewsGroup(const NewsGroup &n) : groupName(n.groupName), groupId(n.groupId), nextArticleId(n.nextArticleId){}
@@ -13,9 +14,11 @@ class NewsGroup {
 
 	// Deletes an article with the articleId Id
 	bool deleteArticle(int id);
-	Article getArticle(int id);
+	Article getArticle(size_t id);
 	int getId() {return groupId;}
 	std::string getName(){return groupName;}
+	// NewsGroup& operator=(NewsGroup&& rhs);
+	NewsGroup& operator=(NewsGroup& rhs);
 
 	// Returns the set of articles
 	std::set<Article> getArticles() {return articles;}
@@ -36,4 +39,5 @@ bool operator==(NewsGroup lhs, std::string rhs){
 bool operator==(NewsGroup lhs, int rhs){
 	return lhs.getId() == rhs;
 }
+
 #endif
