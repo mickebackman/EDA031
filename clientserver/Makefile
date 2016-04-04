@@ -17,13 +17,13 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS = newsserver
+PROGS = newsserver newsclient
 
 all: $(PROGS)
 
 # Targets rely on implicit rules for compiling and linking
 newsserver : newsserver.o server.o connection.o memorydatabase.o messagehandler.o newsgroup.o
-
+newsclient : newsclient.o messagehandler.o connection.o
 
 # Phony targets
 .PHONY: all clean
