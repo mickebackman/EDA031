@@ -1,67 +1,68 @@
 #include <string>
+#include <cstring>
 #include <vector>
 #include "messagehandler.h"
 #include "memorydatabase.h"
 #include "database.h"
+#include "server.h"
 #include "diskdatabase.h"
 #include "protocol.h"
 #include "article.h"
 #include "newsgroup.h"
 #include <memory>
+#include <map>
 #include <iostream>
+#include "connectionclosedexception.h"
 
 using namespace std;
 
 bool ListNewsGroup(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
-	if (c == COM_END){
+	if (c == Protocol::COM_END){
 		try{
-			vector<pair<int, string> v = db.getNewsGroups();
+			vector<pair<int, string> > v =db.getNewsGroups();
+			// Answer on form: ANS_LIST_NG num_p [num_p string_p]* ANS_END
+			mh.writeByte(Protocol::ANS_LIST_NG);
+			mh.writeByte(Protocol::PAR_NUM);
+			mh.writeNumber(v.size());
+			for (pair<int,string> p : v){
+				mh.writeByte(Protocol::PAR_NUM);
+				mh.writeNumber(p.first);
+				mh.writeByte(Protocol::PAR_STRING);
+				mh.writeNumber(p.second.size());
+				mh.writeString(p.second);
+			}
+			mh.writeByte(Protocol::ANS_END);
 		}
 		catch (exception& e){
-			mh.writeByte(ANS_LIST_NG);
-			mh.writeByte(PAR_NUM);
+			mh.writeByte(Protocol::ANS_LIST_NG);
+			mh.writeByte(Protocol::PAR_NUM);
 			mh.writeNumber(0);
-			mh.writeByte(ANS_END);
-			return;
+			mh.writeByte(Protocol::ANS_END);
 		}
-		// Answer on form: ANS_LIST_NG num_p [num_p string_p]* ANS_END
-		mh.writeByte(ANS_LIST_NG);
-		mh.writeByte(PAR_NUM);
-		mh.writeNumber(v.size());
-		for (pair<int,string> p : v){
-			mh.writeByte(PAR_NUM);
-			mh.writeNumber(p.first);
-			mh.writeByte(PAR_STRING);
-			mh.writeNumber(p.second.size());
-			mh.writeString(p.second);
-		}
-		mh.writeByte(ANS_END);
 		return true;
 	} else {
 		return false;
 	}
-
 }
 
 bool CreateNewsGroup(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
-	int n; 
+	int n;
 	string s;
-	unsigned char c;
-	if (c == PAR_STRING){
+	if (c == Protocol::PAR_STRING){
 		n = mh.readNumber();
 		s = mh.readString();
-		char c = mh.readByte();
+		c = mh.readByte();
 		try{
 			db.addNewsGroup(s);
-			mh.writeByte(ANS_CREATE_NG);
-			mh.writeByte(ANS_ACK);
-			mh.writeByte(ANS_END);
+			mh.writeByte(Protocol::ANS_CREATE_NG);
+			mh.writeByte(Protocol::ANS_ACK);
+			mh.writeByte(Protocol::ANS_END);
 		} catch(exception& e){
-		 mh.writeByte(ANS_CREATE_NG);
-		 mh.writeByte(ANS_NAK);
-		 mh.writeByte(ERR_NG_ALREADY_EXISTS);
+		 mh.writeByte(Protocol::ANS_CREATE_NG);
+		 mh.writeByte(Protocol::ANS_NAK);
+		 mh.writeByte(Protocol::ERR_NG_ALREADY_EXISTS);
 
 		}
 		return true;
@@ -74,18 +75,18 @@ bool CreateNewsGroup(MessageHandler& mh, Database& db){
 
 bool DeleteNewsGroup(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
-	if (c == PAR_NUM){
+	if (c == Protocol::PAR_NUM){
 		int deleteid = mh.readNumber();
 		unsigned char e = mh.readByte();
-		mh.writeByte(ANS_DELETE_NG);
+		mh.writeByte(Protocol::ANS_DELETE_NG);
 		try {
 			db.deleteNewsGroup(deleteid);
-			mh.writeByte(ANS_ACK);
+			mh.writeByte(Protocol::ANS_ACK);
 		}catch(exception& e){
-			mh.writeByte(ANS_NAK);
-			mh.writeByte(ERR_NG_DOES_NOT_EXIST);
+			mh.writeByte(Protocol::ANS_NAK);
+			mh.writeByte(Protocol::ERR_NG_DOES_NOT_EXIST);
 		}
-		mh.writeByte(ANS_END);
+		mh.writeByte(Protocol::ANS_END);
 		return true;
 	}else{
 		// Protocol was not followed
@@ -96,28 +97,28 @@ bool DeleteNewsGroup(MessageHandler& mh, Database& db){
 
 bool ListArticles(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
-	if (c == PAR_NUM){
+	if (c == Protocol::PAR_NUM){
 		int newsGroupId = mh.readNumber();
 		unsigned char e = mh.readByte();
-		mh.writeByte(ANS_LIST_ART);
+		mh.writeByte(Protocol::ANS_LIST_ART);
 		try {
-			set<Article> s = db.getArticlesInNewsGroup(newsGroupId);
-			mh.writeByte(ANS_ACK);
-			mh.writeByte(PAR_NUM);
+			map<int,Article> s = db.getArticlesInNewsGroup(newsGroupId);
+			mh.writeByte(Protocol::ANS_ACK);
+			mh.writeByte(Protocol::PAR_NUM);
 			mh.writeNumber(s.size());
-			for(Article a : s){
-				mh.writeByte(PAR_NUM);
-				mh.writeNumber(a.getId());
-				mh.writeByte(PAR_STRING);
-				mh.writeNumber(a.getName().size());
-				mh.writeString(a.getName());
+			for(pair<int, Article> p : s){
+				mh.writeByte(Protocol::PAR_NUM);
+				mh.writeNumber(p.first);
+				mh.writeByte(Protocol::PAR_STRING);
+				mh.writeNumber(p.second.getName().size());
+				mh.writeString(p.second.getName());
 			}
 		}catch(exception& e){
-			mh.writeByte(ANS_NAK);
-			mh.writeByte(ERR_NG_DOES_NOT_EXIST);
+			mh.writeByte(Protocol::ANS_NAK);
+			mh.writeByte(Protocol::ERR_NG_DOES_NOT_EXIST);
 
 		}
-		mh.writeByte(ANS_END);
+		mh.writeByte(Protocol::ANS_END);
 		return true;
 	}
 	else{
@@ -128,28 +129,28 @@ bool ListArticles(MessageHandler& mh, Database& db){
 
 bool CreateArticle(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
-	if (c == PAR_NUM){
+	if (c == Protocol::PAR_NUM){
 		int newsGroupId = mh.readNumber();
-		if (mh.readByte() == PAR_STRING){
+		if (mh.readByte() == Protocol::PAR_STRING){
 			mh.readNumber();
 			string title = mh.readString();
-			if (mh.readByte() == PAR_STRING){
+			if (mh.readByte() == Protocol::PAR_STRING){
 				mh.readNumber();
 				string author = mh.readString();
-				if (mh.readByte() == PAR_STRING{
+				if (mh.readByte() == Protocol::PAR_STRING){
 					mh.readNumber();
 					string text = mh.readString();
-					if (mh.readByte() == COM_END){
+					if (mh.readByte() == Protocol::COM_END){
 						// All is good. Respond
-						mh.writeByte(ANS_CREATE_ART);
+						mh.writeByte(Protocol::ANS_CREATE_ART);
 						try{
 							db.addArticle(newsGroupId, title, author,text);
-							mh.writeByte(ANS_ACK);
-							mh.writeByte(ANS_END);
-							
+							mh.writeByte(Protocol::ANS_ACK);
+							mh.writeByte(Protocol::ANS_END);
+
 						}catch(exception& e){
-							mh.writeByte(ANS_NAK);
-							mh.writeByte(ANS_END);
+							mh.writeByte(Protocol::ANS_NAK);
+							mh.writeByte(Protocol::ANS_END);
 						}
 						return true;
 					}
@@ -163,24 +164,24 @@ bool CreateArticle(MessageHandler& mh, Database& db){
 
 bool DeleteArticle(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
-	if (c == PAR_NUM){
+	if (c == Protocol::PAR_NUM){
 		int newsGroupId = mh.readNumber();
-		if (mh.readByte() == PAR_NUM){
+		if (mh.readByte() == Protocol::PAR_NUM){
 			int artId = mh.readNumber();
-			if (mh.readByte() == COM_END){
-			mh.writeByte(ANS_DELETE_ART);
+			if (mh.readByte() == Protocol::COM_END){
+			mh.writeByte(Protocol::ANS_DELETE_ART);
 			try{
-				db.deleteArticle();
-				mh.writeByte(ANS_ACK);
+				db.deleteArticle(newsGroupId,artId);
+				mh.writeByte(Protocol::ANS_ACK);
 				}catch(int e){
-					mh.writeByte(ANS_NAK);
+					mh.writeByte(Protocol::ANS_NAK);
 			 		if(e==0){ // newsgroup error
-			 			mh.writeByte(ERR_NG_DOES_NOT_EXIST);
+			 			mh.writeByte(Protocol::ERR_NG_DOES_NOT_EXIST);
 			 		}else { // article error
-			 			mh.writeByte(ERR_ART_DOES_NOT_EXIST);
+			 			mh.writeByte(Protocol::ERR_ART_DOES_NOT_EXIST);
 			 		}
 				}
-			mh.writeByte(ANS_END);
+			mh.writeByte(Protocol::ANS_END);
 			return true;
 			}
 		}
@@ -192,33 +193,33 @@ bool DeleteArticle(MessageHandler& mh, Database& db){
 
 bool GetArticle(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
-	if (c == PAR_NUM){
+	if (c == Protocol::PAR_NUM){
 		int newsGroupId = mh.readNumber();
-		if (mh.readByte() == PAR_NUM){
+		if (mh.readByte() == Protocol::PAR_NUM){
 			int artId = mh.readNumber();
-			if (mh.readByte() == COM_END){
-				mh.writeByte(ANS_GET_ART);
+			if (mh.readByte() == Protocol::COM_END){
+				mh.writeByte(Protocol::ANS_GET_ART);
 				try{
 					Article a = db.getArticle(newsGroupId, artId);
-					mh.writeByte(ANS_ACK);
-					mh.writeByte(PAR_STRING);
+					mh.writeByte(Protocol::ANS_ACK);
+					mh.writeByte(Protocol::PAR_STRING);
 					mh.writeNumber(a.getName().size());
 					mh.writeString(a.getName());
-					mh.writeByte(PAR_STRING);
+					mh.writeByte(Protocol::PAR_STRING);
 					mh.writeNumber(a.getAuthor().size());
 					mh.writeString(a.getAuthor());
-					mh.writeByte(PAR_STRING);
+					mh.writeByte(Protocol::PAR_STRING);
 					mh.writeNumber(a.getText().size());
 					mh.writeString(a.getText());
 				}catch (int e){
-					mh.writeByte(ANS_NAK);
+					mh.writeByte(Protocol::ANS_NAK);
 					if (e==0){
-						mh.writeByte(ERR_NG_DOES_NOT_EXIST);
+						mh.writeByte(Protocol::ERR_NG_DOES_NOT_EXIST);
 					}else{
-						mh.writeByte(ERR_ART_DOES_NOT_EXIST);
+						mh.writeByte(Protocol::ERR_ART_DOES_NOT_EXIST);
 					}
 				}
-				mh.writeByte(ANS_END);
+				mh.writeByte(Protocol::ANS_END);
 				return true;
 			}
 		}
@@ -246,11 +247,11 @@ int main(int argc, char* argv[]){
 
 	// Arguments for starting the program with the choice of db-type
 	// TODO: db kanske behöver vara på heapen?
-	Database db; 
-	if (argv[2].compare("disk")){
-		db = new DiskDatabase();
-	} else if (argv[2].compare("memory")){
-		db = new MemoryDatabase();
+	Database db;
+	if ((strncmp(argv[2],"disk",4)) == 0){
+		//db = DiskDatabase();
+	} else if ((strncmp(argv[2],"memory",6)) == 0){
+		db = MemoryDatabase();
 	}else {
 		cerr << "Error in database choice" << endl;
 		exit(1);
@@ -265,7 +266,7 @@ int main(int argc, char* argv[]){
 	while (true) {
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {
-			MessageHandler mh(conn);
+			MessageHandler mh(*conn);
 			try {
 			unsigned char command = mh.readByte();
 			switch(command){
@@ -320,7 +321,7 @@ int main(int argc, char* argv[]){
 
 			}
 
-			} catch (ConnectionClosedException&) {
+		} catch (ConnectionClosedException&) {
 			server.deregisterConnection(conn);
 		cout << "Client closed connection" << endl;
 			}
