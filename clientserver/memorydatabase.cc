@@ -93,12 +93,13 @@ int MemoryDatabase::numberOfNewsGroups(){
 }
 
 int numberOfArticlesInNewsGroup(int newsGroupId){
-  NewsGroup g;
-  try{
-    g = groups.at(newsGroupId);
-  }catch(...){
-    // group does not exist - 0
-    throw 0;
-  }
-  return g.getArticles().size();
+  // NewsGroup g;
+  // try{
+  //   g = groups.at(newsGroupId);
+  // }catch(...){
+  //   // group does not exist - 0
+  //   throw 0;
+  // }
+  // return g.getArticles().size();
+  return getArticlesInNewsGroup(newsGroupId).size();
 }

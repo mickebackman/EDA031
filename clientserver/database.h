@@ -1,5 +1,9 @@
 #ifndef DATABASE_H
 #define DATABASE_H
+#include "article.h"
+#include <vector>
+#include <set>
+#include <string>
 
 //Interface for the different database classes.
 
@@ -18,11 +22,11 @@ public:
    // deletes the specified group.
    virtual void deleteNewsGroup(int newsGroupId);
    // Returns a string representation of all of the groups.
-   virtual std::vector<pair<int, std::string> getNewsGroups();
+   virtual std::vector<std::pair<int, std::string> > getNewsGroups();
    // Returns a string representation of all the articles in the specified group.
    virtual std::set<Article> getArticlesInNewsGroup(int newsGroupId);
    //Returns the number of news groups.
-   virual int numberOfNewsGroups();
+   virtual int numberOfNewsGroups();
    //Return number of articles in the specified news group.
    virtual int numberOfArticlesInNewsGroup(int newsGroupId);
 

@@ -3,11 +3,12 @@
 
 #include <map>
 #include <string>
+#include "database.h"
 #include "newsgroup.h"
 #include "article.h"
 #include <vector>
 
- class MemoryDatabase{
+ class MemoryDatabase : public Database{
 public:
    MemoryDatabase(): nextGroupId(0){}
    void addArticle(int newsGroupName, std::string name, std::string author, std::string text);
