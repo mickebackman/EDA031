@@ -46,18 +46,15 @@ Article MemoryDatabase::getArticle(int newsGroupId, int articleId){
 }
 
 void MemoryDatabase::deleteArticle(int newsGroupId, int articleId){
-
-  NewsGroup g;
   try{
-    g = groups.at(newsGroupId);
+    groups.at(newsGroupId);
   }catch(...){
     // group does not exist - 0
     throw 0;
   }
-  if(!g.deleteArticle(articleId)){
+  if(!groups.at(newsGroupId).deleteArticle(articleId)){
     throw 1;
   }
-
   }
 
 
