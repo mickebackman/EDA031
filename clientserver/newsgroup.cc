@@ -17,7 +17,6 @@ NewsGroup::addArticle(std::string name, std::string author, std::string text){
 }
 
 bool NewsGroup::deleteArticle(int id){
-		cout<<"kom till delete"<<endl;
 		return articles.erase(id);
 }
 

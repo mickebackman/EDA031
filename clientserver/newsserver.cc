@@ -51,10 +51,8 @@ bool ListNewsGroup(MessageHandler& mh, Database& db){
 bool CreateNewsGroup(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
 	if (c == Protocol::PAR_STRING){
-		cout<<"skriv n = "<<endl;
 		//unsigned char n = mh.readByte();
 		int n = mh.readNumber();
-		cout<<n<<endl;
 		string s = mh.readString(n);
 		c = mh.readByte();
 		try{
@@ -66,7 +64,7 @@ bool CreateNewsGroup(MessageHandler& mh, Database& db){
 		 mh.writeByte(Protocol::ANS_CREATE_NG);
 		 mh.writeByte(Protocol::ANS_NAK);
 		 mh.writeByte(Protocol::ERR_NG_ALREADY_EXISTS);
-
+		 mh.writeByte(Protocol::ANS_END);
 		}
 		return true;
 	}
