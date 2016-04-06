@@ -3,6 +3,7 @@
 #include <algorithm>
 #include "newsgroup.h"
 #include "article.h"
+#include <iostream>
 
 using namespace std;
 
@@ -16,8 +17,8 @@ NewsGroup::addArticle(std::string name, std::string author, std::string text){
 }
 
 bool NewsGroup::deleteArticle(int id){
-
-	return articles.erase(id) == 1;
+		cout<<"kom till delete"<<endl;
+		return articles.erase(id);
 }
 
 Article NewsGroup::getArticle(size_t id){
