@@ -21,37 +21,28 @@ void MessageHandler::writeNumber(int value){
 }
 
 string MessageHandler::readString(){
-	cout<<"read"<<endl;
 	string s;
 	char ch;
 	while ((ch = conn.read()) != '$') {
 		s += ch;
-		cout<<ch<<endl;
 	}
-	cout<<"end of while"<<endl;
 	return s;
 }
 
 string MessageHandler::readString(int n){
-	cout<<"read"<<endl;
 	string s;
 	char ch;
 	for (size_t i = 0; i != n;++i) {
 		ch = conn.read();
 		s += ch;
-		cout<<ch<<endl;
 	}
-	cout<<"end of while"<<endl;
 	return s;
 }
 
 void MessageHandler::writeString(const string& s){
 	for (char c : s) {
 		conn.write(c);
-		cout<<c<<endl;
 	}
-	//cout<<"$"<<endl;
-	//conn.write('$');
 }
 
 unsigned char MessageHandler::readByte(){
