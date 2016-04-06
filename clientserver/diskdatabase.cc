@@ -28,14 +28,6 @@ DiskDatabase::DiskDatabase(){
 
 }
 
-DiskDatabase::~DiskDatabase(){
-  remove(root+"//"+"meta");
-  ofstream out(root+"//"+"meta");
-  out << nextGroupId << " " << numberOfNewsGroups;
-  out.close();
-
-}
-
 void DiskDatabase::addArticle(int newsGroupId, std::string name, std::string author, std::string text){
   DIR *dir = NULL;
   dir = opendir(root+"//"+to_string(newsGroupId));
@@ -61,23 +53,25 @@ void DiskDatabase::addArticle(int newsGroupId, std::string name, std::string aut
 
 
 void DiskDatabase::addNewsGroup(std::string newsGroupName){
-  DIR *dir = NULL;
-  dir = opendir(root+"//"+to_string(newsGroupId));
-  if(dir == NULL){
-    closedir(dir);
-    // The news group does already exist.
-    throw runtime_error("The group already exists!");
+  auto v = getNewsGroups();
+  for( auto p : v){
+    if(p.second == newsGroupName){
+      // The news group does already exist.
+      throw runtime_error("The group already exists!");
+    }
   }
-  closedir(dir);
   mkdir(root+"//"+to_string(nextGroupId));
   ofstream out(root+"//"+to_string(nextGroupId)+"//"+"meta");
   out << "0 " << "0 " << newsGroupName << endl;
   ++nextGroupId;
   ++numberOfNewsGroups;
+  remove(root+"//"+"meta");
+  ofstream outMeta(root+"//"+"meta");
+  outMeta << nextGroupId << " " << numberOfNewsGroups;
   out.close();
-
-
+  outMeta.close();
 }
+
 Article DiskDatabase::getArticle(int newsGroupId, int articleId){
   DIR *dir = NULL;
   dir = opendir(root+"//"+to_string(newsGroupId));
@@ -132,12 +126,63 @@ void DiskDatabase::deleteNewsGroup(int newsGroupId){
     throw 0;
   }
   --numberOfNewsGroups;
-  system("rm -r"+root+"//"+to_string(newsGroupId));
+  system("rm -r "+root+"//"+to_string(newsGroupId));
+  remove(root+"//"+"meta");
+  ofstream outMeta(root+"//"+"meta");
+  outMeta << nextGroupId << " " << numberOfNewsGroups;
+  out.close();
+  outMeta.close();
 }
 
-vector<std::pair<int, std::string> > DiskDatabase::getNewsGroups(){
+vector<pair<int, string> > DiskDatabase::getNewsGroups(){
+  vector<string> newsGroups;
+  vector<pair<int, string> result;
+  dirent* de;
+  DIR* dp;
+  dp = opendir(root);
+    while (true){
+      de = readdir(dp);
+      if (de == NULL){
+        break;
+      }
+      result.push_back(string( de->d_name));
+      }
+    closedir(dp);
+    for(string group : newsGroups){
+      ifstream in(root+"//"+group+"//"+"meta");
+      int junk, junk2;
+      string name;
+      in >> junk >> junk >> name;
+      result.emplace_back(stoi(group), name);
+      in.close();
+    }
+    return result;
+  }
 
+
+map<int, Article> DiskDatabase::getArticlesInNewsGroup(int newsGroupId){
+  vector<string> articles;
+  map<int, Articles> result;
+  dirent* de;
+  DIR* dp;
+  dp = opendir(root+"//"+newsGroupId);
+    while (true){
+      de = readdir(dp);
+      if (de == NULL){
+        break;
+      }
+      result.push_back(string( de->d_name));
+      }
+    closedir(dp);
+    for(string group : newsGroups){
+      ifstream in(root+"//"+group+"//"+"meta");
+      int junk, junk2;
+      string name;
+      in >> junk >> junk >> name;
+      result.emplace_back(stoi(group), name);
+      in.close();
+    }
+    return result;
 }
-map<int, Article> DiskDatabase::getArticlesInNewsGroup(int newsGroupId);
 int DiskDatabase::numberOfNewsGroups();
 int DiskDatabase::numberOfArticlesInNewsGroup(int newsGroupId);
