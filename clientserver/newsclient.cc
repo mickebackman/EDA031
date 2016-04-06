@@ -13,8 +13,8 @@ bool waitForAnswer(MessageHandler& mh) {
 	while(true) {
 		string out = "";
 		switch (c){
-			c = mh.readByte();
 			case Protocol::ANS_CREATE_NG:
+			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::ANS_END){
 					cout << "Newsgroup created" << endl;
@@ -30,6 +30,7 @@ bool waitForAnswer(MessageHandler& mh) {
 			}
 			return false;
 			case Protocol::ANS_CREATE_ART:
+			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::ANS_END){
 					cout << "Article created" << endl;
@@ -46,6 +47,7 @@ bool waitForAnswer(MessageHandler& mh) {
 			return false;
 
 			case Protocol::ANS_DELETE_NG:
+			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::ANS_END){
 					cout << "Newsgroup deleted" << endl;
@@ -62,6 +64,7 @@ bool waitForAnswer(MessageHandler& mh) {
 			return false;
 
 			case Protocol::ANS_DELETE_ART:
+			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::ANS_END){
 					cout << "Article deleted" << endl;
@@ -81,8 +84,11 @@ bool waitForAnswer(MessageHandler& mh) {
 			return false;
 
 			case Protocol::ANS_LIST_NG:
+			c = mh.readByte();
 			if (c == Protocol::PAR_NUM){
+				cout<<"caaoowt"<<endl;
 				int n = mh.readNumber();
+				cout<< n;
 				string out;
 				for (int i = 0; i != n; ++i){
 					if (mh.readByte() == Protocol::PAR_NUM){
@@ -103,6 +109,7 @@ bool waitForAnswer(MessageHandler& mh) {
 			return false;
 
 			case Protocol::ANS_LIST_ART:
+			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::PAR_NUM){
 					int n = mh.readNumber();
@@ -124,6 +131,7 @@ bool waitForAnswer(MessageHandler& mh) {
 			}
 			return false;
 			case Protocol::ANS_GET_ART:
+			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::PAR_STRING){
 					mh.readNumber();
@@ -174,7 +182,7 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	cout << "Welcome to NewsApp, Commands: \n listGroups \n listArticles \n createGroup \n createArticle \n deleteGroup \n deleteArticle groupId \"articleName\" \"articleAuthor\" \"articleText\" \n readArticle";
+	cout << "Welcome to NewsApp, Commands: \n listGroups \n listArticles \n createGroup \n createArticle \n deleteGroup \n deleteArticle groupId \"articleName\" \"articleAuthor\" \"articleText\" \n readArticle\n";
 	string command;
 	string article;
 	MessageHandler mh(conn);

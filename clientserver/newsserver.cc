@@ -50,12 +50,10 @@ bool ListNewsGroup(MessageHandler& mh, Database& db){
 
 bool CreateNewsGroup(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
-	int n;
 	string s;
 	if (c == Protocol::PAR_STRING){
 		cout << "Skriv n" << endl;
-		n = mh.readNumber();
-		cout << n;
+		int n = mh.readNumber();
 		s = mh.readString();
 		c = mh.readByte();
 		try{
@@ -276,14 +274,14 @@ int main(int argc, char* argv[]){
 			switch(command){
 				case Protocol::COM_LIST_NG:
 					if (!ListNewsGroup(mh, db)){
-					server.deregisterConnection(conn);
-					cout << "Protocol not followed in listing news groups, disconnecting client" << endl;
+						server.deregisterConnection(conn);
+						cout << "Protocol not followed in listing news groups, disconnecting client" << endl;
 					}
 				break;
 				case Protocol::COM_CREATE_NG:
 					if(!CreateNewsGroup(mh, db)){
-					server.deregisterConnection(conn);
-					cout << "Protocol not followed in creating a news group, disconnecting client" << endl;
+						server.deregisterConnection(conn);
+						cout << "Protocol not followed in creating a news group, disconnecting client" << endl;
 					}
 				break;
 				case Protocol::COM_DELETE_NG:

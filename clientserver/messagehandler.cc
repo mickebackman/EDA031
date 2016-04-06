@@ -6,13 +6,9 @@
 using namespace std;
 
 int MessageHandler::readNumber(){
-	cout << "inside readnumber"; 
 	unsigned char byte1 = conn.read();
-	cout << "1";
 	unsigned char byte2 = conn.read();
-	cout << "2";
 	unsigned char byte3 = conn.read();
-	cout << "3";
 	unsigned char byte4 = conn.read();
 	return (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | byte4;
 }
