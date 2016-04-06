@@ -11,7 +11,7 @@
  class MemoryDatabase : public Database{
 public:
    MemoryDatabase(): Database(0){}
-   void addArticle(int newsGroupName, std::string name, std::string author, std::string text);
+   void addArticle(int newsGroupId, std::string name, std::string author, std::string text);
    void addNewsGroup(std::string newsGroupName);
    Article getArticle(int newsGroupId, int articleId);
    void deleteArticle(int newsGroupId, int articleId);

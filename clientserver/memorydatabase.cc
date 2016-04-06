@@ -52,11 +52,10 @@ void MemoryDatabase::deleteArticle(int newsGroupId, int articleId){
     // group does not exist - 0
     throw 0;
   }
-  try{
-    g.deleteArticle(articleId);
-  }catch(exception& e){
+  if(!g.deleteArticle(articleId)){
     throw 1;
-    }
+  }
+
   }
 
 
