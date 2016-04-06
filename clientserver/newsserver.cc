@@ -50,11 +50,12 @@ bool ListNewsGroup(MessageHandler& mh, Database& db){
 
 bool CreateNewsGroup(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
-	string s;
 	if (c == Protocol::PAR_STRING){
-		cout << "Skriv n" << endl;
+		cout<<"skriv n = "<<endl;
+		//unsigned char n = mh.readByte();
 		int n = mh.readNumber();
-		s = mh.readString();
+		cout<<n<<endl;
+		string s = mh.readString(n);
 		c = mh.readByte();
 		try{
 			db.addNewsGroup(s);
@@ -131,17 +132,18 @@ bool ListArticles(MessageHandler& mh, Database& db){
 
 bool CreateArticle(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
+	int size;
 	if (c == Protocol::PAR_NUM){
 		int newsGroupId = mh.readNumber();
 		if (mh.readByte() == Protocol::PAR_STRING){
-			mh.readNumber();
-			string title = mh.readString();
+			size = mh.readNumber();
+			string title = mh.readString(size);
 			if (mh.readByte() == Protocol::PAR_STRING){
-				mh.readNumber();
-				string author = mh.readString();
+				size = mh.readNumber();
+				string author = mh.readString(size);
 				if (mh.readByte() == Protocol::PAR_STRING){
-					mh.readNumber();
-					string text = mh.readString();
+					size = mh.readNumber();
+					string text = mh.readString(size);
 					if (mh.readByte() == Protocol::COM_END){
 						// All is good. Respond
 						mh.writeByte(Protocol::ANS_CREATE_ART);
@@ -271,6 +273,7 @@ int main(int argc, char* argv[]){
 			MessageHandler mh(*conn);
 			try {
 			unsigned char command = mh.readByte();
+			cout << (command + 'a') <<endl;
 			switch(command){
 				case Protocol::COM_LIST_NG:
 					if (!ListNewsGroup(mh, db)){
@@ -279,6 +282,7 @@ int main(int argc, char* argv[]){
 					}
 				break;
 				case Protocol::COM_CREATE_NG:
+				cout << "skapa group"<<endl;
 					if(!CreateNewsGroup(mh, db)){
 						server.deregisterConnection(conn);
 						cout << "Protocol not followed in creating a news group, disconnecting client" << endl;
