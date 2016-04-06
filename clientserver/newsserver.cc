@@ -271,7 +271,6 @@ int main(int argc, char* argv[]){
 			MessageHandler mh(*conn);
 			try {
 			unsigned char command = mh.readByte();
-			cout << (command + 'a') <<endl;
 			switch(command){
 				case Protocol::COM_LIST_NG:
 					if (!ListNewsGroup(mh, db)){
@@ -280,7 +279,6 @@ int main(int argc, char* argv[]){
 					}
 				break;
 				case Protocol::COM_CREATE_NG:
-				cout << "skapa group"<<endl;
 					if(!CreateNewsGroup(mh, db)){
 						server.deregisterConnection(conn);
 						cout << "Protocol not followed in creating a news group, disconnecting client" << endl;
