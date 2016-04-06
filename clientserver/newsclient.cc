@@ -20,14 +20,15 @@ bool waitForAnswer(MessageHandler& mh) {
 				if (mh.readByte() == Protocol::ANS_END){
 					cout << "Newsgroup created\n" << endl;
 					return true;
-				}else if (c == Protocol::ANS_NAK){
-					if (mh.readByte() == Protocol::ERR_NG_ALREADY_EXISTS){
-						if (mh.readByte() == Protocol::ANS_END){
-							cout << "Newsgroup could not be created: Newsgroup already exist\n" << endl;
-							return true;
-						}
+				}
+			}else if (c == Protocol::ANS_NAK){
+				if (mh.readByte() == Protocol::ERR_NG_ALREADY_EXISTS){
+					if (mh.readByte() == Protocol::ANS_END){
+						cout << "Newsgroup could not be created: Newsgroup already exists\n" << endl;
+						return true;
 					}
 				}
+				
 			}
 			return false;
 			case Protocol::ANS_CREATE_ART:
@@ -36,54 +37,56 @@ bool waitForAnswer(MessageHandler& mh) {
 				if (mh.readByte() == Protocol::ANS_END){
 					cout << "Article created\n" << endl;
 					return true;
-				}else if (c == Protocol::ANS_NAK){
-					if (mh.readByte() == Protocol::ERR_NG_DOES_NOT_EXIST){
-						if (mh.readByte() == Protocol::ANS_END){
-							cout << "Article could not be created: Newsgroup does not exist\n" << endl;
-							return true;
-						}
-					}
 				}
+			}else if (c == Protocol::ANS_NAK){
+				if (mh.readByte() == Protocol::ERR_NG_DOES_NOT_EXIST){
+					if (mh.readByte() == Protocol::ANS_END){
+						cout << "Article could not be created: Newsgroup does not exist\n" << endl;
+						return true;
+					}
+				
 			}
 			return false;
-
+			
 			case Protocol::ANS_DELETE_NG:
 			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::ANS_END){
 					cout << "Newsgroup deleted\n" << endl;
 					return true;
-				}else if (c == Protocol::ANS_NAK){
-					if (mh.readByte() == Protocol::ERR_NG_DOES_NOT_EXIST){
-						if (mh.readByte() == Protocol::ANS_END){
-							cout << "Newsgroup could not be deleted: Newsgroup doest not exist\n" << endl;
-							return true;
-						}
+				}
+			}else if (c == Protocol::ANS_NAK){
+				if (mh.readByte() == Protocol::ERR_NG_DOES_NOT_EXIST){
+					if (mh.readByte() == Protocol::ANS_END){
+						cout << "Newsgroup could not be deleted: Newsgroup doest not exist\n" << endl;
+						return true;
 					}
 				}
+				
 			}
 			return false;
-
+			
 			case Protocol::ANS_DELETE_ART:
 			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::ANS_END){
 					cout << "Article deleted\n" << endl;
 					return true;
-				}else if (c == Protocol::ANS_NAK){
-					unsigned char e = mh.readByte();
-					if (e == Protocol::ERR_NG_DOES_NOT_EXIST){
-						if (mh.readByte() == Protocol::ANS_END){
-							cout << "Article could not be deleted: Newsgroup doest not exist\n" << endl;
-							return true;
-						}
-					}else if(e == Protocol::ERR_ART_DOES_NOT_EXIST){
-						cout << "Article could not be deleted: Article does not exist\n" << endl;
-					}
 				}
+			}else if (c == Protocol::ANS_NAK){
+				unsigned char e = mh.readByte();
+				if (e == Protocol::ERR_NG_DOES_NOT_EXIST){
+					if (mh.readByte() == Protocol::ANS_END){
+						cout << "Article could not be deleted: Newsgroup doest not exist\n" << endl;
+						return true;
+					}
+				}else if(e == Protocol::ERR_ART_DOES_NOT_EXIST){
+					cout << "Article could not be deleted: Article does not exist\n" << endl;
+				}
+				
 			}
 			return false;
-
+			
 			case Protocol::ANS_LIST_NG:
 			c = mh.readByte();
 			if (c == Protocol::PAR_NUM){
@@ -106,7 +109,7 @@ bool waitForAnswer(MessageHandler& mh) {
 				}
 			}
 			return false;
-
+			
 			case Protocol::ANS_LIST_ART:
 			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
@@ -153,7 +156,7 @@ bool waitForAnswer(MessageHandler& mh) {
 					cout << "Could not get article: Newsgroup does not exist\n" << endl;
 					return true;
 				} else if(mh.readByte() == Protocol::ERR_ART_DOES_NOT_EXIST){
-					cout << "Could not get article: Newsgroup does not exist\n" << endl;
+					cout << "Could not get article: Article does not exist\n" << endl;
 					return true;
 				}
 			}
@@ -166,7 +169,7 @@ int main(int argc, char* argv[]) {
 		cerr << "Usage: newsclient host-name port-number\n" << endl;
 		exit(1);
 	}
-
+	
 	int port = -1;
 	try {
 		port = stoi(argv[2]);
@@ -174,7 +177,7 @@ int main(int argc, char* argv[]) {
 		cerr << "Wrong port number. " << e.what() << endl;
 		exit(1);
 	}
-
+	
 	Connection conn(argv[1], port);
 	if (!conn.isConnected()) {
 		cerr << "Connection attempt failed\n" << endl;
@@ -230,15 +233,15 @@ int main(int argc, char* argv[]) {
 				mh.writeByte(Protocol::COM_CREATE_ART);
 				cin >> groupId;
 				getline(cin, article);
-
+				
 				auto start = article.find_first_of("\"");
 				auto end = article.find_first_of("\"", start+1);
 				articleName = article.substr(start+1, end-start-1);
-
+				
 				start = article.find_first_of("\"", end+1);
 				end = article.find_first_of("\"", start+1);
 				articleAuthor = article.substr(start+1, end-start-1);
-
+				
 				start = article.find_first_of("\"", end+1);
 				end = article.find_first_of("\"", start+1);
 				articleText = article.substr(start+1, end-start-1);
