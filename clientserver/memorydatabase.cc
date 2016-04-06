@@ -20,6 +20,11 @@ void MemoryDatabase::addArticle(int newsGroupId, string name, string author, str
 
 
 void MemoryDatabase::addNewsGroup(string newsGroupName){
+    for(auto p : groups){
+      if(p.second.getName() == newsGroupName){
+        throw runtime_error("The group already exists!");
+      }
+    }
     auto p = groups.insert(make_pair(nextGroupId, NewsGroup(newsGroupName, nextGroupId)));
     if(!p.second){
       throw runtime_error("The group already exists!");
@@ -91,13 +96,9 @@ int MemoryDatabase::numberOfNewsGroups(){
 }
 
 int MemoryDatabase::numberOfArticlesInNewsGroup(int newsGroupId){
-  // NewsGroup g;
-  // try{
-  //   g = groups.at(newsGroupId);
-  // }catch(...){
-  //   // group does not exist - 0
-  //   throw 0;
-  // }
-  // return g.getArticles().size();
+  try{
   return getArticlesInNewsGroup(newsGroupId).size();
+  }catch(...){
+    throw 0;
+  }
 }
