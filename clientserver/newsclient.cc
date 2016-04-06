@@ -17,12 +17,12 @@ bool waitForAnswer(MessageHandler& mh) {
 			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::ANS_END){
-					cout << "Newsgroup created" << endl;
+					cout << "Newsgroup created\n" << endl;
 					return true;
 				}else if (c == Protocol::ANS_NAK){
 					if (mh.readByte() == Protocol::ERR_NG_ALREADY_EXISTS){
 						if (mh.readByte() == Protocol::ANS_END){
-							cout << "Newsgroup could not be created: Newsgroup already exist" << endl;
+							cout << "Newsgroup could not be created: Newsgroup already exist\n" << endl;
 							return true;
 						}
 					}
@@ -33,12 +33,12 @@ bool waitForAnswer(MessageHandler& mh) {
 			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::ANS_END){
-					cout << "Article created" << endl;
+					cout << "Article created\n" << endl;
 					return true;
 				}else if (c == Protocol::ANS_NAK){
 					if (mh.readByte() == Protocol::ERR_NG_DOES_NOT_EXIST){
 						if (mh.readByte() == Protocol::ANS_END){
-							cout << "Article could not be created: Newsgroup does not exist" << endl;
+							cout << "Article could not be created: Newsgroup does not exist\n" << endl;
 							return true;
 						}
 					}
@@ -50,12 +50,12 @@ bool waitForAnswer(MessageHandler& mh) {
 			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::ANS_END){
-					cout << "Newsgroup deleted" << endl;
+					cout << "Newsgroup deleted\n" << endl;
 					return true;
 				}else if (c == Protocol::ANS_NAK){
 					if (mh.readByte() == Protocol::ERR_NG_DOES_NOT_EXIST){
 						if (mh.readByte() == Protocol::ANS_END){
-							cout << "Newsgroup could not be deleted: Newsgroup doest not exist" << endl;
+							cout << "Newsgroup could not be deleted: Newsgroup doest not exist\n" << endl;
 							return true;
 						}
 					}
@@ -67,17 +67,17 @@ bool waitForAnswer(MessageHandler& mh) {
 			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::ANS_END){
-					cout << "Article deleted" << endl;
+					cout << "Article deleted\n" << endl;
 					return true;
 				}else if (c == Protocol::ANS_NAK){
 					unsigned char e = mh.readByte();
 					if (e == Protocol::ERR_NG_DOES_NOT_EXIST){
 						if (mh.readByte() == Protocol::ANS_END){
-							cout << "Article could not be deleted: Newsgroup doest not exist" << endl;
+							cout << "Article could not be deleted: Newsgroup doest not exist\n" << endl;
 							return true;
 						}
 					}else if(e == Protocol::ERR_ART_DOES_NOT_EXIST){
-						cout << "Article could not be deleted: Article does not exist" << endl;
+						cout << "Article could not be deleted: Article does not exist\n" << endl;
 					}
 				}
 			}
@@ -86,9 +86,7 @@ bool waitForAnswer(MessageHandler& mh) {
 			case Protocol::ANS_LIST_NG:
 			c = mh.readByte();
 			if (c == Protocol::PAR_NUM){
-				cout<<"caaoowt"<<endl;
 				int n = mh.readNumber();
-				cout<< n;
 				string out;
 				for (int i = 0; i != n; ++i){
 					if (mh.readByte() == Protocol::PAR_NUM){
@@ -119,7 +117,6 @@ bool waitForAnswer(MessageHandler& mh) {
 							out.append(" ");
 							if (mh.readByte() == Protocol::PAR_STRING){
 								out.append(mh.readString() + "\n");
-
 							}
 						}
 					}
@@ -135,7 +132,7 @@ bool waitForAnswer(MessageHandler& mh) {
 			if (c == Protocol::ANS_ACK){
 				if (mh.readByte() == Protocol::PAR_STRING){
 					mh.readNumber();
-					out.append(mh.readString() + "\n");
+					out.append(mh.readString() + " From: ");
 					if (mh.readByte() == Protocol::PAR_STRING){
 						mh.readNumber();
 						out.append(mh.readString() + "\n");
@@ -151,10 +148,10 @@ bool waitForAnswer(MessageHandler& mh) {
 				}
 			}else if (c == Protocol::ANS_NAK){
 				if (mh.readByte() == Protocol::ERR_NG_DOES_NOT_EXIST){
-					cout << "Could not get article: Newsgroup does not exist" << endl;
+					cout << "Could not get article: Newsgroup does not exist\n" << endl;
 					return true;
 				} else if(mh.readByte() == Protocol::ERR_ART_DOES_NOT_EXIST){
-					cout << "Could not get article: Newsgroup does not exist" << endl;
+					cout << "Could not get article: Newsgroup does not exist\n" << endl;
 					return true;
 				}
 			}
@@ -164,7 +161,7 @@ bool waitForAnswer(MessageHandler& mh) {
 }	//end function
 int main(int argc, char* argv[]) {
 	if (argc != 3) {
-		cerr << "Usage: newsclient host-name port-number" << endl;
+		cerr << "Usage: newsclient host-name port-number\n" << endl;
 		exit(1);
 	}
 
@@ -178,7 +175,7 @@ int main(int argc, char* argv[]) {
 
 	Connection conn(argv[1], port);
 	if (!conn.isConnected()) {
-		cerr << "Connection attempt failed" << endl;
+		cerr << "Connection attempt failed\n" << endl;
 		exit(1);
 	}
 
@@ -198,7 +195,7 @@ int main(int argc, char* argv[]) {
 				mh.writeByte(Protocol::COM_LIST_NG);
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
-					cout << "Got something wrong off protocol from server" << endl;
+					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}
 			else if( command == "listArticles"){
@@ -208,7 +205,7 @@ int main(int argc, char* argv[]) {
 				mh.writeNumber(groupId);
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
-					cout << "Got something wrong off protocol from server" << endl;
+					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}
 			else if( command == "createGroup"){
@@ -219,7 +216,7 @@ int main(int argc, char* argv[]) {
 				mh.writeString(groupName);
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
-					cout << "Got something wrong off protocol from server" << endl;
+					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}
 			else if( command == "createArticle"){
@@ -229,15 +226,15 @@ int main(int argc, char* argv[]) {
 
 				auto start = article.find_first_of("\"");
 				auto end = article.find_first_of("\"", start+1);
-				articleName = article.substr(start+1, end-start);
+				articleName = article.substr(start+1, end-start-1);
 
 				start = article.find_first_of("\"", end+1);
-				end = article.find_first_of("\"", start);
-				articleAuthor = article.substr(start+1, end-start);
+				end = article.find_first_of("\"", start+1);
+				articleAuthor = article.substr(start+1, end-start-1);
 
 				start = article.find_first_of("\"", end+1);
-				end = article.find_first_of("\"", start);
-				articleText = article.substr(start+1, end-start);
+				end = article.find_first_of("\"", start+1);
+				articleText = article.substr(start+1, end-start-1);
 				
 				mh.writeByte(Protocol::PAR_NUM);
 				mh.writeNumber(groupId);
@@ -254,9 +251,11 @@ int main(int argc, char* argv[]) {
 				mh.writeNumber(articleText.length());
 				mh.writeString(articleText);
 				
+				cout << articleName + " " + articleAuthor + " " + articleText + "\n" << endl;
+				
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
-					cout << "Got something wrong off protocol from server" << endl;
+					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}
 			else if( command == "deleteGroup"){
@@ -266,7 +265,7 @@ int main(int argc, char* argv[]) {
 				mh.writeNumber(groupId);
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
-					cout << "Got something wrong off protocol from server" << endl;
+					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}
 			else if( command == "deleteArticle"){
@@ -278,7 +277,7 @@ int main(int argc, char* argv[]) {
 				mh.writeNumber(articleId);
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
-					cout << "Got something wrong off protocol from server" << endl;
+					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}
 			else if( command == "readArticle"){
@@ -290,10 +289,10 @@ int main(int argc, char* argv[]) {
 				mh.writeNumber(articleId);
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
-					cout << "Got something wrong off protocol from server" << endl;
+					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}else{
-				cout << "Cannot recognize command.";
+				cout << "Cannot recognize command.\n" << endl;
 			}
 		} catch (ConnectionClosedException&) {
 			cout << " No reply from server. Exiting." << endl;
