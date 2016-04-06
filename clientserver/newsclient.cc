@@ -1,6 +1,7 @@
 #include <string>
 #include "messagehandler.h"
 #include <memory>
+#include <algorithm>
 #include <iostream>
 #include "connection.h"
 #include "protocol.h"
@@ -181,7 +182,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	cout << "********************************************************" << endl;
-	cout << "Welcome to NewsApp, Commands: \n listGroups \n listArticles groupId \n createGroup groupName \n createArticle groupId \"articleName\" \"articleAuthor\" \"articleText\" \n deleteGroup groupId \n deleteArticle groupId \"articleName\" \"articleAuthor\" \"articleText\" \n readArticle groupId articleId \n help \n";
+	cout << "Welcome to NewsApp, Commands: \n listGroups \n listArticles groupId \n createGroup groupName \n createArticle groupId \"articleName\" \"articleAuthor\" \"articleText\" \n deleteGroup groupId \n deleteArticle groupId articleId \n readArticle groupId articleId \n help \n";
 	cout << "********************************************************\n" << endl;
 	string command;
 	string article;
@@ -195,15 +196,16 @@ int main(int argc, char* argv[]) {
 	while (true) {
 		cout << "news> ";
 		cin >> command;
+		transform(command.begin(), command.end(), command.begin(), ::tolower);
 		try {
-			if(command =="listGroups"){
+			if(command =="listgroups"){
 				mh.writeByte(Protocol::COM_LIST_NG);
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
 					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}
-			else if( command == "listArticles"){
+			else if( command == "listarticles"){
 				mh.writeByte(Protocol::COM_LIST_ART);
 				cin >> groupId;
 				mh.writeByte(Protocol::PAR_NUM);
@@ -213,7 +215,7 @@ int main(int argc, char* argv[]) {
 					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}
-			else if( command == "createGroup"){
+			else if( command == "creategroup"){
 				mh.writeByte(Protocol::COM_CREATE_NG);
 				getline(cin, groupName);
 				mh.writeByte(Protocol::PAR_STRING);
@@ -224,7 +226,7 @@ int main(int argc, char* argv[]) {
 					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}
-			else if( command == "createArticle"){
+			else if( command == "createarticle"){
 				mh.writeByte(Protocol::COM_CREATE_ART);
 				cin >> groupId;
 				getline(cin, article);
@@ -261,7 +263,7 @@ int main(int argc, char* argv[]) {
 					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}
-			else if( command == "deleteGroup"){
+			else if( command == "deletegroup"){
 				mh.writeByte(Protocol::COM_DELETE_NG);
 				cin >> groupId;
 				mh.writeByte(Protocol::PAR_NUM);
@@ -271,7 +273,7 @@ int main(int argc, char* argv[]) {
 					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}
-			else if( command == "deleteArticle"){
+			else if( command == "deletearticle"){
 				mh.writeByte(Protocol::COM_DELETE_ART);
 				cin >> groupId >> articleId;
 				mh.writeByte(Protocol::PAR_NUM);
@@ -283,7 +285,7 @@ int main(int argc, char* argv[]) {
 					cout << "Got something wrong off protocol from server\n" << endl;
 				}
 			}
-			else if( command == "readArticle"){
+			else if( command == "readarticle"){
 				mh.writeByte(Protocol::COM_GET_ART);
 				cin >> groupId >> articleId;
 				mh.writeByte(Protocol::PAR_NUM);
@@ -297,7 +299,7 @@ int main(int argc, char* argv[]) {
 			}
 			else if( command == "help" ){
 				cout << "********************************************************" << endl;
-				cout << "Welcome to NewsApp, Commands: \n listGroups \n listArticles groupId \n createGroup groupName \n createArticle groupId \"articleName\" \"articleAuthor\" \"articleText\" \n deleteGroup groupId \n deleteArticle groupId \"articleName\" \"articleAuthor\" \"articleText\" \n readArticle groupId articleId \n help \n";
+				cout << "Welcome to NewsApp, Commands: \n listGroups \n listArticles groupId \n createGroup groupName \n createArticle groupId \"articleName\" \"articleAuthor\" \"articleText\" \n deleteGroup groupId \n deleteArticle groupId articleId \n readArticle groupId articleId \n help \n";
 				cout << "********************************************************\n" << endl;
 			}else{
 				cout << "Cannot recognize command.\n" << endl;
