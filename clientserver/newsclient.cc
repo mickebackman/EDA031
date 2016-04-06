@@ -204,6 +204,7 @@ int main(int argc, char* argv[]) {
 			else if( command == "listArticles"){
 				mh.writeByte(Protocol::COM_LIST_ART);
 				cin >> groupId;
+				mh.writeByte(Protocol::PAR_NUM);
 				mh.writeNumber(groupId);
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
@@ -213,6 +214,8 @@ int main(int argc, char* argv[]) {
 			else if( command == "createGroup"){
 				mh.writeByte(Protocol::COM_CREATE_NG);
 				getline(cin, groupName);
+				mh.writeByte(Protocol::PAR_STRING);
+				mh.writeNumber(groupName.length());
 				mh.writeString(groupName);
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
@@ -235,11 +238,22 @@ int main(int argc, char* argv[]) {
 				start = article.find_first_of("\"", end+1);
 				end = article.find_first_of("\"", start);
 				articleText = article.substr(start+1, end-start);
-
+				
+				mh.writeByte(Protocol::PAR_NUM);
 				mh.writeNumber(groupId);
+				
+				mh.writeByte(Protocol::PAR_STRING);
+				mh.writeNumber(articleName.length());
 				mh.writeString(articleName);
+				
+				mh.writeByte(Protocol::PAR_STRING);
+				mh.writeNumber(articleAuthor.length());
 				mh.writeString(articleAuthor);
+				
+				mh.writeByte(Protocol::PAR_STRING);
+				mh.writeNumber(articleText.length());
 				mh.writeString(articleText);
+				
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
 					cout << "Got something wrong off protocol from server" << endl;
@@ -248,6 +262,7 @@ int main(int argc, char* argv[]) {
 			else if( command == "deleteGroup"){
 				mh.writeByte(Protocol::COM_DELETE_NG);
 				cin >> groupId;
+				mh.writeByte(Protocol::PAR_NUM);
 				mh.writeNumber(groupId);
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
@@ -257,7 +272,9 @@ int main(int argc, char* argv[]) {
 			else if( command == "deleteArticle"){
 				mh.writeByte(Protocol::COM_DELETE_ART);
 				cin >> groupId >> articleId;
+				mh.writeByte(Protocol::PAR_NUM);
 				mh.writeNumber(groupId);
+				mh.writeByte(Protocol::PAR_NUM);
 				mh.writeNumber(articleId);
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
@@ -267,7 +284,9 @@ int main(int argc, char* argv[]) {
 			else if( command == "readArticle"){
 				mh.writeByte(Protocol::COM_GET_ART);
 				cin >> groupId >> articleId;
+				mh.writeByte(Protocol::PAR_NUM);
 				mh.writeNumber(groupId);
+				mh.writeByte(Protocol::PAR_NUM);
 				mh.writeNumber(articleId);
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
