@@ -25,10 +25,7 @@ void MemoryDatabase::addNewsGroup(string newsGroupName){
         throw runtime_error("The group already exists!");
       }
     }
-    auto p = groups.insert(make_pair(nextGroupId, NewsGroup(newsGroupName, nextGroupId)));
-    if(!p.second){
-      throw runtime_error("The group already exists!");
-    }
+    groups.insert(make_pair(nextGroupId, NewsGroup(newsGroupName, nextGroupId)));
     ++nextGroupId;
 }
 
