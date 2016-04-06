@@ -44,7 +44,7 @@ bool waitForAnswer(MessageHandler& mh) {
 						cout << "Article could not be created: Newsgroup does not exist\n" << endl;
 						return true;
 					}
-				
+				}
 			}
 			return false;
 			
@@ -58,7 +58,7 @@ bool waitForAnswer(MessageHandler& mh) {
 			}else if (c == Protocol::ANS_NAK){
 				if (mh.readByte() == Protocol::ERR_NG_DOES_NOT_EXIST){
 					if (mh.readByte() == Protocol::ANS_END){
-						cout << "Newsgroup could not be deleted: Newsgroup doest not exist\n" << endl;
+						cout << "Newsgroup could not be deleted: Newsgroup does not exist\n" << endl;
 						return true;
 					}
 				}
@@ -77,11 +77,14 @@ bool waitForAnswer(MessageHandler& mh) {
 				unsigned char e = mh.readByte();
 				if (e == Protocol::ERR_NG_DOES_NOT_EXIST){
 					if (mh.readByte() == Protocol::ANS_END){
-						cout << "Article could not be deleted: Newsgroup doest not exist\n" << endl;
+						cout << "Article could not be deleted: Newsgroup does not exist\n" << endl;
 						return true;
 					}
 				}else if(e == Protocol::ERR_ART_DOES_NOT_EXIST){
-					cout << "Article could not be deleted: Article does not exist\n" << endl;
+					if (mh.readByte() == Protocol::ANS_END){
+						cout << "Article could not be deleted: Article does not exist\n" << endl;
+						return true;
+					}
 				}
 				
 			}
@@ -164,6 +167,7 @@ bool waitForAnswer(MessageHandler& mh) {
 		} //end switch
 	} //end while
 }	//end function
+
 int main(int argc, char* argv[]) {
 	if (argc != 3) {
 		cerr << "Usage: newsclient host-name port-number\n" << endl;
@@ -207,6 +211,8 @@ int main(int argc, char* argv[]) {
 				if (!waitForAnswer(mh)){
 					cout << "Got something wrong off protocol from server\n" << endl;
 				}
+				cin.clear();
+				cin.ignore(1000,'\n');
 			}
 			else if( command == "listarticles"){
 				mh.writeByte(Protocol::COM_LIST_ART);
@@ -217,6 +223,8 @@ int main(int argc, char* argv[]) {
 				if (!waitForAnswer(mh)){
 					cout << "Got something wrong off protocol from server\n" << endl;
 				}
+				cin.clear();
+				cin.ignore(1000,'\n');
 			}
 			else if( command == "creategroup"){
 				mh.writeByte(Protocol::COM_CREATE_NG);
@@ -267,18 +275,28 @@ int main(int argc, char* argv[]) {
 				}
 			}
 			else if( command == "deletegroup"){
-				mh.writeByte(Protocol::COM_DELETE_NG);
-				cin >> groupId;
-				mh.writeByte(Protocol::PAR_NUM);
-				mh.writeNumber(groupId);
-				mh.writeByte(Protocol::COM_END);
+				cin.exceptions(istream::failbit|istream::badbit);
+				try{
+					cin >> groupId;
+					mh.writeByte(Protocol::COM_DELETE_NG);
+					mh.writeByte(Protocol::PAR_NUM);
+					mh.writeNumber(groupId);
+					mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
 					cout << "Got something wrong off protocol from server\n" << endl;
 				}
+			}catch(istream::failure e){
+				cout << "Newsgroup could not be deleted: groupId should be an integer\n" << endl;
+
+			}
+			cin.clear();
+			cin.ignore(1000,'\n');
 			}
 			else if( command == "deletearticle"){
-				mh.writeByte(Protocol::COM_DELETE_ART);
+				cin.exceptions(istream::failbit|istream::badbit);
+				try{
 				cin >> groupId >> articleId;
+				mh.writeByte(Protocol::COM_DELETE_ART);
 				mh.writeByte(Protocol::PAR_NUM);
 				mh.writeNumber(groupId);
 				mh.writeByte(Protocol::PAR_NUM);
@@ -287,6 +305,11 @@ int main(int argc, char* argv[]) {
 				if (!waitForAnswer(mh)){
 					cout << "Got something wrong off protocol from server\n" << endl;
 				}
+			}catch(istream::failure e){
+				cout << "Article could not be deleted: Both groupId and articleId should be integers\n" << endl;
+			}
+			cin.clear();
+			cin.ignore(1000,'\n');
 			}
 			else if( command == "readarticle"){
 				mh.writeByte(Protocol::COM_GET_ART);
@@ -299,6 +322,8 @@ int main(int argc, char* argv[]) {
 				if (!waitForAnswer(mh)){
 					cout << "Got something wrong off protocol from server\n" << endl;
 				}
+				cin.clear();
+				cin.ignore(1000,'\n');
 			}
 			else if( command == "help" ){
 				cout << "********************************************************" << endl;
@@ -306,7 +331,10 @@ int main(int argc, char* argv[]) {
 				cout << "********************************************************\n" << endl;
 			}else{
 				cout << "Cannot recognize command.\n" << endl;
+				cin.clear();
+				cin.ignore(1000,'\n');
 			}
+
 		} catch (ConnectionClosedException&) {
 			cout << " No reply from server. Exiting." << endl;
 			exit(1);
