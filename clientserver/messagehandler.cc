@@ -29,11 +29,20 @@ string MessageHandler::readString(){
 	return s;
 }
 
+string MessageHandler::readString(int n){
+	string s;
+	char ch;
+	for (size_t i = 0; i != n;++i) {
+		ch = conn.read();
+		s += ch;
+	}
+	return s;
+}
+
 void MessageHandler::writeString(const string& s){
 	for (char c : s) {
 		conn.write(c);
 	}
-	conn.write('$');
 }
 
 unsigned char MessageHandler::readByte(){

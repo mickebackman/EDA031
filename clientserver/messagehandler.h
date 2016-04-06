@@ -12,6 +12,7 @@ class MessageHandler {
 		int readNumber();
 		void writeNumber(int n);
 		std::string readString();
+		std::string readString(int n);
 		void writeString(const std::string& s);
 	private:
 		const Connection& conn;
