@@ -23,7 +23,7 @@ DiskDatabase::DiskDatabase(){
     in >> nextId >> newsGroups;
     in.close();
   }
-  numberOfNewsGroups = newsGroups;
+  nbrOfNewsGroups = newsGroups;
   Database(nextId);
 
 }
@@ -64,10 +64,10 @@ void DiskDatabase::addNewsGroup(std::string newsGroupName){
   ofstream out(root+"//"+to_string(nextGroupId)+"//"+"meta");
   out << "0 " << "0 " << newsGroupName << endl;
   ++nextGroupId;
-  ++numberOfNewsGroups;
+  ++nbrOfNewsGroups;
   remove(root+"//"+"meta");
   ofstream outMeta(root+"//"+"meta");
-  outMeta << nextGroupId << " " << numberOfNewsGroups;
+  outMeta << nextGroupId << " " << nbrOfNewsGroups;
   out.close();
   outMeta.close();
 }
@@ -125,11 +125,11 @@ void DiskDatabase::deleteNewsGroup(int newsGroupId){
     // The news group does not exist.
     throw 0;
   }
-  --numberOfNewsGroups;
+  --nbrOfNewsGroups;
   system("rm -r "+root+"//"+to_string(newsGroupId));
   remove(root+"//"+"meta");
   ofstream outMeta(root+"//"+"meta");
-  outMeta << nextGroupId << " " << numberOfNewsGroups;
+  outMeta << nextGroupId << " " << nbrOfNewsGroups;
   out.close();
   outMeta.close();
 }
@@ -188,7 +188,7 @@ map<int, Article> DiskDatabase::getArticlesInNewsGroup(int newsGroupId){
     return result;
 }
 int DiskDatabase::numberOfNewsGroups(){
-  return numberOfNewsGroups;
+  return nbrOfNewsGroups;
 }
 int DiskDatabase::numberOfArticlesInNewsGroup(int newsGroupId){
   return getArticlesInNewsGroup().size();

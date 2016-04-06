@@ -30,8 +30,8 @@ public:
 
  private:
    // The root directory.
-   string root;
-   int numberOfNewsGroups;
+   std::string root;
+   int nbrOfNewsGroups;
 
 };
 
