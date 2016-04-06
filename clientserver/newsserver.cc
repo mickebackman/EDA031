@@ -278,7 +278,6 @@ int main(int argc, char* argv[]){
 					}
 				break;
 				case Protocol::COM_CREATE_NG:
-				cout << "skapa group"<<endl;
 					if(!CreateNewsGroup(mh, *db)){
 						server.deregisterConnection(conn);
 						cout << "Protocol not followed in creating a news group, disconnecting client" << endl;
@@ -333,5 +332,5 @@ int main(int argc, char* argv[]){
 		cout << "New client connects" << endl;
 		}
 	}
-
+	delete db;
 }
