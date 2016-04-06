@@ -4,9 +4,9 @@
 #include <vector>
 #include "messagehandler.h"
 #include "memorydatabase.h"
-//#include "database.h"
+#include "database.h"
 #include "server.h"
-//#include "diskdatabase.h"
+#include "diskdatabase.h"
 #include "protocol.h"
 #include "article.h"
 #include "newsgroup.h"
@@ -249,13 +249,12 @@ int main(int argc, char* argv[]){
 		exit(1);
 	}
 
+	Database* db;
 	// Arguments for starting the program with the choice of db-type
-	// TODO: db kanske behöver vara på heapen?
-	MemoryDatabase db = MemoryDatabase();
 	if ((strncmp(argv[2],"disk",4)) == 0){
-		//db = DiskDatabase();
+		db = new DiskDatabase();
 	} else if ((strncmp(argv[2],"memory",6)) == 0){
-
+		db = new MemoryDatabase();
 	}else {
 		cerr << "Error in database choice" << endl;
 		exit(1);
@@ -276,44 +275,44 @@ int main(int argc, char* argv[]){
 			cout << (command + 'a') <<endl;
 			switch(command){
 				case Protocol::COM_LIST_NG:
-					if (!ListNewsGroup(mh, db)){
+					if (!ListNewsGroup(mh, *db)){
 						server.deregisterConnection(conn);
 						cout << "Protocol not followed in listing news groups, disconnecting client" << endl;
 					}
 				break;
 				case Protocol::COM_CREATE_NG:
 				cout << "skapa group"<<endl;
-					if(!CreateNewsGroup(mh, db)){
+					if(!CreateNewsGroup(mh, *db)){
 						server.deregisterConnection(conn);
 						cout << "Protocol not followed in creating a news group, disconnecting client" << endl;
 					}
 				break;
 				case Protocol::COM_DELETE_NG:
-					if(!DeleteNewsGroup(mh, db)){
+					if(!DeleteNewsGroup(mh, *db)){
 					server.deregisterConnection(conn);
 					cout << "Protocol not followed in deleting a news group, disconnecting client" << endl;
 					}
 				break;
 				case Protocol::COM_LIST_ART:
-					if(!ListArticles(mh, db)){
+					if(!ListArticles(mh, *db)){
 					server.deregisterConnection(conn);
 					cout << "Protocol not followed in listing articles, disconnecting client" << endl;
 					}
 				break;
 				case Protocol::COM_CREATE_ART:
-					if(!CreateArticle(mh, db)){
+					if(!CreateArticle(mh, *db)){
 					server.deregisterConnection(conn);
 					cout << "Protocol not followed in creating article, disconnecting client" << endl;
 					}
 				break;
 				case Protocol::COM_DELETE_ART:
-					if(!DeleteArticle(mh, db)){
+					if(!DeleteArticle(mh, *db)){
 					server.deregisterConnection(conn);
 					cout << "Protocol not followed in deleting article, disconnecting client" << endl;
 					}
 				break;
 				case Protocol::COM_GET_ART:
-					if(!GetArticle(mh, db)){
+					if(!GetArticle(mh, *db)){
 					server.deregisterConnection(conn);
 					cout << "Protocol not followed in getting article, disconnecting client" << endl;
 					}
