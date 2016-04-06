@@ -9,7 +9,7 @@
 
  class Database{
 public:
-   Database(int id) : nextGroupId(id) {}
+   Database(int id = 0) : nextGroupId(id) {}
   // Adds an article to the database.
    virtual void addArticle(int newsGroupId, std::string name, std::string author, std::string text) = 0;
    // Adds a news group to the database.
@@ -33,7 +33,7 @@ public:
 
 
  protected:
-   // The id for the group that is added next. 
+   // The id for the group that is added next.
    int nextGroupId;
 
 };
