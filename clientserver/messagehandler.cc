@@ -20,14 +20,14 @@ void MessageHandler::writeNumber(int value){
 	conn.write(value & 0xFF);
 }
 
-string MessageHandler::readString(){
+/*string MessageHandler::readString(){
 	string s;
 	char ch;
 	while ((ch = conn.read()) != '$') {
 		s += ch;
 	}
 	return s;
-}
+}*/
 
 string MessageHandler::readString(int n){
 	string s;

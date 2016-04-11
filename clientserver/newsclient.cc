@@ -238,7 +238,6 @@ int main(int argc, char* argv[]) {
 				}
 			}
 			else if( command == "createarticle"){
-				mh.writeByte(Protocol::COM_CREATE_ART);
 				cin >> groupId;
 				getline(cin, article);
 				
@@ -253,6 +252,8 @@ int main(int argc, char* argv[]) {
 				start = article.find_first_of("\"", end+1);
 				end = article.find_first_of("\"", start+1);
 				articleText = article.substr(start+1, end-start-1);
+				
+				mh.writeByte(Protocol::COM_CREATE_ART);
 				
 				mh.writeByte(Protocol::PAR_NUM);
 				mh.writeNumber(groupId);
@@ -336,7 +337,7 @@ int main(int argc, char* argv[]) {
 			}
 
 		} catch (ConnectionClosedException&) {
-			cout << " No reply from server. Exiting." << endl;
+			cout << " No reply from server, client might not have followed protocol. Exiting." << endl;
 			exit(1);
 		}
 	}

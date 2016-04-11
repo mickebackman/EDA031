@@ -47,18 +47,22 @@ bool CreateNewsGroup(MessageHandler& mh, Database& db){
 		int n = mh.readNumber();
 		string s = mh.readString(n);
 		c = mh.readByte();
-		try{
-			db.addNewsGroup(s);
-			mh.writeByte(Protocol::ANS_CREATE_NG);
-			mh.writeByte(Protocol::ANS_ACK);
-			mh.writeByte(Protocol::ANS_END);
-		} catch(exception& e){
-		 mh.writeByte(Protocol::ANS_CREATE_NG);
-		 mh.writeByte(Protocol::ANS_NAK);
-		 mh.writeByte(Protocol::ERR_NG_ALREADY_EXISTS);
-		 mh.writeByte(Protocol::ANS_END);
-		}
+		if (s.length() != 0) {
+			try{
+				db.addNewsGroup(s);
+				mh.writeByte(Protocol::ANS_CREATE_NG);
+				mh.writeByte(Protocol::ANS_ACK);
+				mh.writeByte(Protocol::ANS_END);
+			} catch(exception& e){
+		 	mh.writeByte(Protocol::ANS_CREATE_NG);
+		 	mh.writeByte(Protocol::ANS_NAK);
+		 	mh.writeByte(Protocol::ERR_NG_ALREADY_EXISTS);
+		 	mh.writeByte(Protocol::ANS_END);
+			}
 		return true;
+	} else {
+		return false;
+	}
 	}
 	else{
 		// Protocol was not followed
@@ -125,31 +129,26 @@ bool CreateArticle(MessageHandler& mh, Database& db){
 	int size;
 	if (c == Protocol::PAR_NUM){
 		int newsGroupId = mh.readNumber();
-		cout << "newsgroupid " << newsGroupId << endl;
 		if (mh.readByte() == Protocol::PAR_STRING){
 			size = mh.readNumber();
 			string title = mh.readString(size);
-			cout << "title: " << title << " size: " <<size << endl;
-			if (mh.readByte() == Protocol::PAR_STRING){
+			if (mh.readByte() == Protocol::PAR_STRING && size != 0){
 				size = mh.readNumber();
 				string author = mh.readString(size);
-				cout << "author: " << author <<" size: " <<size<<endl;
-				if (mh.readByte() == Protocol::PAR_STRING){
+				if (mh.readByte() == Protocol::PAR_STRING && size != 0){
 					size = mh.readNumber();
 					string text = mh.readString(size);
-					if (mh.readByte() == Protocol::COM_END){
+					if (mh.readByte() == Protocol::COM_END && size != 0){
 						// All is good. Respond
 						mh.writeByte(Protocol::ANS_CREATE_ART);
 						try{
-							cout << "all was good, responding" <<endl;
 							db.addArticle(newsGroupId, title, author,text);
-							cout << "addarticle return form db" << endl;
 							mh.writeByte(Protocol::ANS_ACK);
 							mh.writeByte(Protocol::ANS_END);
 
 						}catch(int e){
-							cout << "catching exception int e" << endl;
 							mh.writeByte(Protocol::ANS_NAK);
+							mh.writeByte(Protocol::ERR_NG_DOES_NOT_EXIST);
 							mh.writeByte(Protocol::ANS_END);
 						}
 						return true;
