@@ -9,6 +9,8 @@
 
 using namespace std;
 
+//Method that receives the answers from the server and processes the data to 
+//make sure everything is as expected.
 bool waitForAnswer(MessageHandler& mh) {
 	unsigned char c = mh.readByte();
 	while(true) {
@@ -168,6 +170,9 @@ bool waitForAnswer(MessageHandler& mh) {
 	} //end while
 }	//end function
 
+
+//The client main function that connects to the server and listens for commands
+//from standard input and sends these to the server according to protocol.
 int main(int argc, char* argv[]) {
 	if (argc != 3) {
 		cerr << "Usage: newsclient host-name port-number\n" << endl;
