@@ -20,16 +20,16 @@ void MessageHandler::writeNumber(int value){
 	conn.write(value & 0xFF);
 }
 
-string MessageHandler::readString(){
+/*string MessageHandler::readString(){
 	string s;
 	char ch;
 	while ((ch = conn.read()) != '$') {
 		s += ch;
 	}
 	return s;
-}
+}*/
 
-/*string MessageHandler::readString(int n){
+string MessageHandler::readString(int n){
 	string s;
 	char ch;
 	for (int i = 0; i != n;++i) {
@@ -37,7 +37,7 @@ string MessageHandler::readString(){
 		s += ch;
 	}
 	return s;
-}*/
+}
 
 void MessageHandler::writeString(const string& s){
 	for (char c : s) {
