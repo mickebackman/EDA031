@@ -27,7 +27,7 @@ DiskDatabase::DiskDatabase(){
     out << "0 " << "0" << endl;
     out.close();
   }
-    in.close();  
+    in.close();
 }
 
 void DiskDatabase::addArticle(int newsGroupId, std::string name, std::string author, std::string text){
@@ -167,8 +167,6 @@ vector<pair<int, string> > DiskDatabase::getNewsGroups(){
       }
       string groupId = string(de->d_name);
       if(groupId != "meta" && groupId != "." && groupId != ".."  && groupId != ".DS_Store"){
-        cout << "FEL" << endl;
-        cout << groupId << endl;
             newsGroups.push_back(groupId);
       }
     }
@@ -180,7 +178,6 @@ vector<pair<int, string> > DiskDatabase::getNewsGroups(){
       in >> junk >> junk;
       getline(in, name);
       getline(in, name);
-      cout <<  "Name: " << name << endl;
       result.emplace_back(stoi(group), name);
       in.close();
     }
