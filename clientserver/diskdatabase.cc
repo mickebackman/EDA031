@@ -16,15 +16,18 @@ using namespace std;
 
 DiskDatabase::DiskDatabase(){
   root = "newsroot";
-  string command = "mkdir -p "+root;
-  system(command.c_str());
   string path = root+"/meta";
-  ofstream out(path);
-  out << "0 " << "0" << endl;
-  out.close();
   ifstream in(path);
-  in >> nextGroupId >> nbrOfNewsGroups;
-  in.close();
+  if(in.good()){
+    in >> nextGroupId >> nbrOfNewsGroups;
+  }else{
+    string command = "mkdir -p "+root;
+    system(command.c_str());
+    ofstream out(path);
+    out << "0 " << "0" << endl;
+    out.close();
+  }
+    in.close();  
 }
 
 void DiskDatabase::addArticle(int newsGroupId, std::string name, std::string author, std::string text){
