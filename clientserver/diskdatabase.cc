@@ -14,6 +14,8 @@
 
 using namespace std;
 
+//Loads next group Id and number of news groups from file if a root directory is
+//present. Otherwise one is created and a meta file as well. 
 DiskDatabase::DiskDatabase(){
   root = "newsroot";
   string path = root+"/meta";
