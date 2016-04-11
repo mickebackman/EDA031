@@ -20,7 +20,6 @@ using namespace std;
 bool ListNewsGroup(MessageHandler& mh, Database& db){
 	unsigned char c = mh.readByte();
 	if (c == Protocol::COM_END){
-		try{
 			vector<pair<int, string> > v =db.getNewsGroups();
 			// Answer on form: ANS_LIST_NG num_p [num_p string_p]* ANS_END
 			mh.writeByte(Protocol::ANS_LIST_NG);
@@ -34,13 +33,6 @@ bool ListNewsGroup(MessageHandler& mh, Database& db){
 				mh.writeString(p.second);
 			}
 			mh.writeByte(Protocol::ANS_END);
-		}
-		catch (exception& e){
-			mh.writeByte(Protocol::ANS_LIST_NG);
-			mh.writeByte(Protocol::PAR_NUM);
-			mh.writeNumber(0);
-			mh.writeByte(Protocol::ANS_END);
-		}
 		return true;
 	} else {
 		return false;
@@ -114,7 +106,7 @@ bool ListArticles(MessageHandler& mh, Database& db){
 				mh.writeNumber(p.second.getName().size());
 				mh.writeString(p.second.getName());
 			}
-		}catch(exception& e){
+		}catch(int e){
 			mh.writeByte(Protocol::ANS_NAK);
 			mh.writeByte(Protocol::ERR_NG_DOES_NOT_EXIST);
 
@@ -150,7 +142,7 @@ bool CreateArticle(MessageHandler& mh, Database& db){
 							mh.writeByte(Protocol::ANS_ACK);
 							mh.writeByte(Protocol::ANS_END);
 
-						}catch(exception& e){
+						}catch(int e){
 							mh.writeByte(Protocol::ANS_NAK);
 							mh.writeByte(Protocol::ANS_END);
 						}
