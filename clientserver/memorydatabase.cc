@@ -18,7 +18,6 @@ void MemoryDatabase::addArticle(int newsGroupId, string name, string author, str
 
 }
 
-
 void MemoryDatabase::addNewsGroup(string newsGroupName){
     for(auto p : groups){
       if(p.second.getName() == newsGroupName){

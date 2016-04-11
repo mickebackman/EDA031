@@ -10,6 +10,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <algorithm>
 
 using namespace std;
 
@@ -36,11 +37,13 @@ void DiskDatabase::addArticle(int newsGroupId, std::string name, std::string aut
     throw 0;
   }
     closedir(dir);
-    path+= "meta";
+    path+= "/meta";
     ifstream in(path);
     int nextId, nbrOfArticles;
     string groupName;
-    in >> nextId >> nbrOfArticles >> groupName;
+    in >> nextId >> nbrOfArticles;
+    getline(in, groupName);
+    getline(in, groupName);
     string pathFile = root+"/"+to_string(newsGroupId)+"/"+to_string(nextId);
     ofstream out(pathFile);
     out << name << endl << author << endl << text << endl;
@@ -48,7 +51,7 @@ void DiskDatabase::addArticle(int newsGroupId, std::string name, std::string aut
     in.close();
     remove(path.c_str());
     ofstream metaOut(path);
-    metaOut << to_string(nextId + 1) << " " << to_string(nbrOfArticles + 1) << " " << groupName << endl;
+    metaOut << to_string(nextId + 1) << " " << to_string(nbrOfArticles + 1) << endl << groupName << endl;
     metaOut.close();
 }
 
@@ -64,13 +67,13 @@ void DiskDatabase::addNewsGroup(std::string newsGroupName){
   string command = "mkdir -p "+root+"/"+to_string(nextGroupId);
   system(command.c_str());
   ofstream out(root+"/"+to_string(nextGroupId)+"/meta");
-  out << "0 " << "0 " << newsGroupName << endl;
+  out << "0 " << "0" << endl << newsGroupName << endl;
   ++nextGroupId;
   ++nbrOfNewsGroups;
   string path = root+"/meta";
   remove(path.c_str());
   ofstream outMeta(root+"/meta");
-  outMeta << nextGroupId << " " << nbrOfNewsGroups;
+  outMeta << nextGroupId << " " << nbrOfNewsGroups << endl;
   out.close();
   outMeta.close();
 }
@@ -89,12 +92,15 @@ Article DiskDatabase::getArticle(int newsGroupId, int articleId){
     //The file does not exist.
     throw 1;
     }
-  string name;
-  string author;
-  string text;
+  string name, author, textLine, text;
   getline(in, name);
   getline(in, author);
-  getline(in, text);
+  getline(in,text);
+  while(getline(in, textLine)){
+    text += "\n";
+    text += textLine;
+  }
+
   return Article(name, author, text, articleId);
 }
 
@@ -112,15 +118,18 @@ void DiskDatabase::deleteArticle(int newsGroupId, int articleId){
     //The file does not exist.
     throw 1;
   }
-  ifstream in(root+"/"+to_string(newsGroupId)+"/meta");
+  path = root+"/"+to_string(newsGroupId)+"/meta";
+  ifstream in(path);
   int nextId, nbrOfArticles;
   string groupName;
-  in >> nextId >> nbrOfArticles >> groupName;
-  path = root+"/"+to_string(newsGroupId)+"/meta";
+  in >> nextId >> nbrOfArticles;
+  getline(in, groupName);
+  getline(in, groupName);
   remove(path.c_str());
-  ofstream metaOut(root+"/"+to_string(newsGroupId)+"/meta");
-  metaOut << nextId << " " << to_string(nbrOfArticles - 1) << " " << groupName << endl;
+  ofstream metaOut(path);
+  metaOut << nextId << " " << to_string(nbrOfArticles - 1) << endl << groupName << endl;
   metaOut.close();
+  in.close();
 
 }
 
@@ -153,19 +162,28 @@ vector<pair<int, string> > DiskDatabase::getNewsGroups(){
       if (de == NULL){
         break;
       }
-      newsGroups.push_back(string(de->d_name));
+      string groupId = string(de->d_name);
+      if(groupId != "meta" && groupId != "." && groupId != ".."  && groupId != ".DS_Store"){
+        cout << "FEL" << endl;
+        cout << groupId << endl;
+            newsGroups.push_back(groupId);
       }
+    }
     closedir(dir);
     for(string group : newsGroups){
       ifstream in(root+"//"+group+"//"+"meta");
       int junk;
       string name;
-      in >> junk >> junk >> name;
+      in >> junk >> junk;
+      getline(in, name);
+      getline(in, name);
+      cout <<  "Name: " << name << endl;
       result.emplace_back(stoi(group), name);
       in.close();
     }
-    return result;
-  }
+
+  return result;
+}
 
 
 map<int, Article> DiskDatabase::getArticlesInNewsGroup(int newsGroupId){
@@ -185,13 +203,22 @@ map<int, Article> DiskDatabase::getArticlesInNewsGroup(int newsGroupId){
       if (de == NULL){
         break;
       }
+      string groupId = string(de->d_name);
+      if(groupId != "meta" && groupId != "." && groupId != ".." && groupId != ".DS_Store" ){
       articles.push_back(string( de->d_name));
+    }
       }
     closedir(dir);
     for(string art : articles){
       ifstream in(root+"//"+to_string(newsGroupId)+"//"+art);
-      string name, author, text;
-      in >> name >> author >> text;
+      string name, author, textLine, text;
+      getline(in, name);
+      getline(in, author);
+      getline(in, text);
+      while(getline(in, textLine)){
+        text += "\n";
+        text += textLine;
+      }
       result.insert(make_pair(stoi(art), Article(name, author, text, stoi(art))));
       in.close();
     }

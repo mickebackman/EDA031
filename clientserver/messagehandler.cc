@@ -29,7 +29,7 @@ string MessageHandler::readString(){
 	return s;
 }
 
-/*string MessageHandler::readString(int n){
+string MessageHandler::readString(int n){
 	string s;
 	char ch;
 	for (int i = 0; i != n;++i) {
@@ -37,7 +37,7 @@ string MessageHandler::readString(){
 		s += ch;
 	}
 	return s;
-}*/
+}
 
 void MessageHandler::writeString(const string& s){
 	for (char c : s) {
