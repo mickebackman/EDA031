@@ -28,7 +28,7 @@ bool waitForAnswer(MessageHandler& mh) {
 						return true;
 					}
 				}
-				
+
 			}
 			return false;
 			case Protocol::ANS_CREATE_ART:
@@ -47,7 +47,7 @@ bool waitForAnswer(MessageHandler& mh) {
 				}
 			}
 			return false;
-			
+
 			case Protocol::ANS_DELETE_NG:
 			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
@@ -62,10 +62,10 @@ bool waitForAnswer(MessageHandler& mh) {
 						return true;
 					}
 				}
-				
+
 			}
 			return false;
-			
+
 			case Protocol::ANS_DELETE_ART:
 			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
@@ -86,10 +86,10 @@ bool waitForAnswer(MessageHandler& mh) {
 						return true;
 					}
 				}
-				
+
 			}
 			return false;
-			
+
 			case Protocol::ANS_LIST_NG:
 			c = mh.readByte();
 			if (c == Protocol::PAR_NUM){
@@ -112,7 +112,7 @@ bool waitForAnswer(MessageHandler& mh) {
 				}
 			}
 			return false;
-			
+
 			case Protocol::ANS_LIST_ART:
 			c = mh.readByte();
 			if (c == Protocol::ANS_ACK){
@@ -173,7 +173,7 @@ int main(int argc, char* argv[]) {
 		cerr << "Usage: newsclient host-name port-number\n" << endl;
 		exit(1);
 	}
-	
+
 	int port = -1;
 	try {
 		port = stoi(argv[2]);
@@ -181,15 +181,15 @@ int main(int argc, char* argv[]) {
 		cerr << "Wrong port number. " << e.what() << endl;
 		exit(1);
 	}
-	
+
 	Connection conn(argv[1], port);
 	if (!conn.isConnected()) {
 		cerr << "Connection attempt failed\n" << endl;
 		exit(1);
 	}
-	
+
 	cout << "********************************************************" << endl;
-	cout << "Welcome to NewsApp, Commands: \n listGroups \n listArticles groupId \n createGroup groupName \n createArticle groupId \"articleName\" \"articleAuthor\" \"articleText\" \n deleteGroup groupId \n deleteArticle groupId articleId \n readArticle groupId articleId \n help \n";
+	cout << "Welcome to NewsApp, Commands: \n listGroups \n listArticles <groupId> \n createGroup <groupName> \n createArticle <groupId> <\"articleName\"> <\"articleAuthor\"> <\"articleText\"> \n deleteGroup <groupId> \n deleteArticle <groupId> <articleId> \n readArticle <groupId> <articleId> \n help - List the commands again \n";
 	cout << "********************************************************\n" << endl;
 	string command;
 	string article;
@@ -240,36 +240,36 @@ int main(int argc, char* argv[]) {
 			else if( command == "createarticle"){
 				cin >> groupId;
 				getline(cin, article);
-				
+
 				auto start = article.find_first_of("\"");
 				auto end = article.find_first_of("\"", start+1);
 				articleName = article.substr(start+1, end-start-1);
-				
+
 				start = article.find_first_of("\"", end+1);
 				end = article.find_first_of("\"", start+1);
 				articleAuthor = article.substr(start+1, end-start-1);
-				
+
 				start = article.find_first_of("\"", end+1);
 				end = article.find_first_of("\"", start+1);
 				articleText = article.substr(start+1, end-start-1);
-				
+
 				mh.writeByte(Protocol::COM_CREATE_ART);
-				
+
 				mh.writeByte(Protocol::PAR_NUM);
 				mh.writeNumber(groupId);
-				
+
 				mh.writeByte(Protocol::PAR_STRING);
 				mh.writeNumber(articleName.length());
 				mh.writeString(articleName);
-				
+
 				mh.writeByte(Protocol::PAR_STRING);
 				mh.writeNumber(articleAuthor.length());
 				mh.writeString(articleAuthor);
-				
+
 				mh.writeByte(Protocol::PAR_STRING);
 				mh.writeNumber(articleText.length());
 				mh.writeString(articleText);
-				
+
 				mh.writeByte(Protocol::COM_END);
 				if (!waitForAnswer(mh)){
 					cout << "Got something wrong off protocol from server\n" << endl;
@@ -328,7 +328,7 @@ int main(int argc, char* argv[]) {
 			}
 			else if( command == "help" ){
 				cout << "********************************************************" << endl;
-				cout << "Welcome to NewsApp, Commands: \n listGroups \n listArticles groupId \n createGroup groupName \n createArticle groupId \"articleName\" \"articleAuthor\" \"articleText\" \n deleteGroup groupId \n deleteArticle groupId articleId \n readArticle groupId articleId \n help \n";
+				cout << "Welcome to NewsApp, Commands: \n listGroups \n listArticles <groupId> \n createGroup <groupName> \n createArticle <groupId> <\"articleName\"> <\"articleAuthor\"> <\"articleText\"> \n deleteGroup <groupId> \n deleteArticle <groupId> <articleId> \n readArticle <groupId> <articleId> \n help - List the commands again \n";
 				cout << "********************************************************\n" << endl;
 			}else{
 				cout << "Cannot recognize command.\n" << endl;

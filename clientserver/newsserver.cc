@@ -329,5 +329,4 @@ int main(int argc, char* argv[]){
 		cout << "New client connects" << endl;
 		}
 	}
-	delete db;
 }

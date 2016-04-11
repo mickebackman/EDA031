@@ -29,8 +29,9 @@ public:
    int numberOfArticlesInNewsGroup(int newsGroupId);
 
  private:
-   // The root directory.
+   // The name of the root directory.
    std::string root;
+   // The current number of news groups.
    int nbrOfNewsGroups;
 
 };
