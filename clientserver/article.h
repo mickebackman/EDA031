@@ -12,21 +12,24 @@ class Article {
 	std::string getAuthor() const {return articleAuthor;}
 	std::string getText() const {return articleText;}
 	std::string getName() const {return articleName;}
+	//copy assignment operator.
 	Article& operator=(const Article& rhs){
 		articleName = rhs.articleName;
 		articleAuthor = rhs.articleAuthor;
 		articleText = rhs.articleText;
 		articleId = rhs.articleId;
 		return *this;
-}
-
-Article& operator=(const Article&& rhs){
+	}
+	/*
+	Move operator.
+	*/
+	Article& operator=(const Article&& rhs){
 		articleName = rhs.articleName;
 		articleAuthor = rhs.articleAuthor;
 		articleText = rhs.articleText;
 		articleId = rhs.articleId;
 		return *this;
-}
+	}
 
 	private:
 	std::string articleName;
