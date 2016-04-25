@@ -29,6 +29,8 @@ public:
    int numberOfArticlesInNewsGroup(int newsGroupId);
 
  private:
+   void updateRootMeta();
+   void updateGroupMeta(std::string path, int nextId, int nbrOfArticles, std::string groupName);
    // The name of the root directory.
    std::string root;
    // The current number of news groups.
